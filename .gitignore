@@ -1,0 +1,43 @@
+# IDE and Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# PHP
+vendor/
+composer.lock
+
+# Logs
+*.log
+logs/
+error_log
+
+# Temporary files
+tmp/
+temp/
+cache/
+
+# Environment files
+.env
+.env.local
+
+# Uploads (if implemented)
+uploads/*
+!uploads/.gitkeep
+
+# Build files
+dist/
+build/
+
+# OS files
+Thumbs.db
+Desktop.ini
+
+# Backup files
+*.bak
+*.backup
+*.sql.gz
+*.sql.zip
