@@ -18,7 +18,8 @@ class SmtpMailer {
         $this->password = $config['password'] ?? SMTP_PASSWORD;
         $this->fromEmail = $config['from_email'] ?? SMTP_FROM_EMAIL;
         $this->fromName = $config['from_name'] ?? SMTP_FROM_NAME;
-        $this->timeout = (int)($config['timeout'] ?? 20);
+        $defaultTimeout = defined('SMTP_TIMEOUT') ? SMTP_TIMEOUT : 20;
+        $this->timeout = (int)($config['timeout'] ?? $defaultTimeout);
     }
 
     public function send($toEmail, $subject, $htmlBody, $textBody = '') {

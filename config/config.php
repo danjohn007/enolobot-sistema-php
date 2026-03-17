@@ -33,12 +33,13 @@ date_default_timezone_set('America/Mexico_City');
 // Chatbot API security
 define('CHATBOT_API_KEY', '91b2c9e5-8f1a-4d3a-9c7e-2b5f6a7d8e9f');
 
-// SMTP basic configuration
+// SMTP configuration (editable)
 define('SMTP_ENABLED', true);
-define('SMTP_HOST', 'localhost');
-define('SMTP_PORT', 587);
-define('SMTP_ENCRYPTION', 'tls'); // tls, ssl, none
-define('SMTP_USERNAME', 'citas@miccqueretaro.com');
-define('SMTP_PASSWORD', 'cambia_esta_password');
-define('SMTP_FROM_EMAIL', 'citas@miccqueretaro.com');
-define('SMTP_FROM_NAME', 'Confirmaciones Chatbot');
+define('SMTP_HOST', 'enolobot.digital');
+define('SMTP_PORT', 465); // cPanel SSL/TLS (if your provider requests STARTTLS, use 587)
+define('SMTP_ENCRYPTION', 'ssl'); // tls, ssl, none
+define('SMTP_USERNAME', 'confirmaciones@enolobot.digital');
+define('SMTP_PASSWORD', 'BO4+&im{Y[m;');
+define('SMTP_FROM_EMAIL', 'confirmaciones@enolobot.digital');
+define('SMTP_FROM_NAME', 'Confirmaciones Enolobot');
+define('SMTP_TIMEOUT', 20);
