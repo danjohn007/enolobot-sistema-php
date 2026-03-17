@@ -13,11 +13,10 @@ define('BASE_URL', rtrim(getBaseUrl(), '/'));
 
 // Database configuration
 define('DB_HOST', 'localhost');
-define('DB_NAME', 'fix360_majorbot');
-define('DB_USER', 'fix360_majorbot');
-define('DB_PASS', 'Danjohn007!');
+define('DB_NAME', 'enolobot_chatbot');
+define('DB_USER', 'enolobot_chatbot');
+define('DB_PASS', ';FY7mUvCtQ%d');
 define('DB_CHARSET', 'utf8mb4');
-
 // System configuration
 define('SITE_NAME', 'MajorBot - Sistema de Mayordomía Online');
 define('DEFAULT_CONTROLLER', 'home');
@@ -30,3 +29,16 @@ session_start();
 
 // Timezone
 date_default_timezone_set('America/Mexico_City');
+
+// Chatbot API security
+define('CHATBOT_API_KEY', '91b2c9e5-8f1a-4d3a-9c7e-2b5f6a7d8e9f');
+
+// SMTP basic configuration
+define('SMTP_ENABLED', true);
+define('SMTP_HOST', 'localhost');
+define('SMTP_PORT', 587);
+define('SMTP_ENCRYPTION', 'tls'); // tls, ssl, none
+define('SMTP_USERNAME', 'citas@miccqueretaro.com');
+define('SMTP_PASSWORD', 'cambia_esta_password');
+define('SMTP_FROM_EMAIL', 'citas@miccqueretaro.com');
+define('SMTP_FROM_NAME', 'Confirmaciones Chatbot');

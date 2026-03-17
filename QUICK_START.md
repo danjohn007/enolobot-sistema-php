@@ -190,6 +190,36 @@ tail -f /var/log/apache2/error.log
 sudo service apache2 restart
 ```
 
+## API Chatbot + SMTP (Confirmacion)
+
+1. Configura estas constantes en `config/config.php`:
+	- `CHATBOT_API_KEY`
+	- `SMTP_HOST`, `SMTP_PORT`, `SMTP_ENCRYPTION`
+	- `SMTP_USERNAME`, `SMTP_PASSWORD`
+	- `SMTP_FROM_EMAIL`, `SMTP_FROM_NAME`
+
+2. Endpoint disponible:
+
+```
+POST /chatbot/confirmacion
+Header: X-Api-Key: TU_CHATBOT_API_KEY
+Content-Type: application/json
+```
+
+3. Body JSON esperado:
+
+```json
+{
+  "correo": "destino@correo.com",
+  "mensaje_usuario": "quiero confirmar cita para 17/03/26"
+}
+```
+
+4. Resultado:
+	- Asunto: `Confirmacion`
+	- Cuerpo: `Confirmacion para DD/MM/YY`
+	- La fecha se extrae del texto del usuario (`mensaje_usuario` o `mensaje`).
+
 ## Resolución Rápida de Problemas
 
 | Problema | Solución Rápida |
