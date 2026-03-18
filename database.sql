@@ -142,7 +142,8 @@ CREATE TABLE IF NOT EXISTS menu_categories (
 CREATE TABLE IF NOT EXISTS dishes (
     id INT AUTO_INCREMENT PRIMARY KEY,
     hotel_id INT NOT NULL,
-    category_id INT NOT NULL,
+    category_id INT NULL DEFAULT NULL,
+    category VARCHAR(100) DEFAULT NULL,
     name VARCHAR(200) NOT NULL,
     description TEXT,
     price DECIMAL(10,2) NOT NULL,
@@ -154,7 +155,7 @@ CREATE TABLE IF NOT EXISTS dishes (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (hotel_id) REFERENCES hotels(id) ON DELETE CASCADE,
-    FOREIGN KEY (category_id) REFERENCES menu_categories(id) ON DELETE CASCADE
+    FOREIGN KEY (category_id) REFERENCES menu_categories(id) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- ============================================

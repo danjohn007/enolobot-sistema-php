@@ -37,7 +37,7 @@ $serviceTimeText = [
     'breakfast' => 'Desayuno',
     'lunch'     => 'Comida',
     'dinner'    => 'Cena',
-    'all_day'   => 'All day',
+    'all_day'   => 'Todo el día',
 ];
 ?>
 
