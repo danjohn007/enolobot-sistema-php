@@ -225,17 +225,27 @@ WHERE category IS NOT NULL
 ON DUPLICATE KEY UPDATE display_order = VALUES(display_order);
 
 -- Asignar category_id en dishes según el nombre de categoría en menu_categories
-UPDATE dishes d
-INNER JOIN menu_categories mc
-    ON mc.hotel_id = d.hotel_id
-    AND mc.name = CASE d.category
-        WHEN 'breakfast'   THEN 'Desayuno'
-        WHEN 'appetizer'   THEN 'Aperitivo'
-        WHEN 'main_course' THEN 'Plato Principal'
-        WHEN 'dessert'     THEN 'Postre'
-        WHEN 'lunch'       THEN 'Comida'
-        WHEN 'dinner'      THEN 'Cena'
-        ELSE d.category
-    END
+-- (una sentencia por categoría para evitar CASE en ON, incompatible con el parser de phpMyAdmin)
+UPDATE dishes d INNER JOIN menu_categories mc ON mc.hotel_id = d.hotel_id AND mc.name = 'Desayuno'
+SET d.category_id = mc.id WHERE d.category_id IS NULL AND d.category = 'breakfast';
+
+UPDATE dishes d INNER JOIN menu_categories mc ON mc.hotel_id = d.hotel_id AND mc.name = 'Aperitivo'
+SET d.category_id = mc.id WHERE d.category_id IS NULL AND d.category = 'appetizer';
+
+UPDATE dishes d INNER JOIN menu_categories mc ON mc.hotel_id = d.hotel_id AND mc.name = 'Plato Principal'
+SET d.category_id = mc.id WHERE d.category_id IS NULL AND d.category = 'main_course';
+
+UPDATE dishes d INNER JOIN menu_categories mc ON mc.hotel_id = d.hotel_id AND mc.name = 'Postre'
+SET d.category_id = mc.id WHERE d.category_id IS NULL AND d.category = 'dessert';
+
+UPDATE dishes d INNER JOIN menu_categories mc ON mc.hotel_id = d.hotel_id AND mc.name = 'Comida'
+SET d.category_id = mc.id WHERE d.category_id IS NULL AND d.category = 'lunch';
+
+UPDATE dishes d INNER JOIN menu_categories mc ON mc.hotel_id = d.hotel_id AND mc.name = 'Cena'
+SET d.category_id = mc.id WHERE d.category_id IS NULL AND d.category = 'dinner';
+
+-- Categorías personalizadas (valores que no son ninguno de los estándar)
+UPDATE dishes d INNER JOIN menu_categories mc ON mc.hotel_id = d.hotel_id AND mc.name = d.category
 SET d.category_id = mc.id
-WHERE d.category_id IS NULL;
+WHERE d.category_id IS NULL
+  AND d.category NOT IN ('breakfast','appetizer','main_course','dessert','lunch','dinner');
