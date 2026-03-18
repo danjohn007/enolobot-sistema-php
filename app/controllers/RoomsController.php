@@ -14,7 +14,7 @@ class RoomsController extends Controller {
         $rooms = $this->roomModel->getRoomsByHotel($hotelId);
 
         $data = [
-            'title' => 'Gestión de Habitaciones',
+            'title' => 'GestiÃ³n de Habitaciones',
             'rooms' => $rooms,
             'role' => $_SESSION['role']
         ];
@@ -44,15 +44,15 @@ class RoomsController extends Controller {
 
             try {
                 $roomId = $this->roomModel->create($data);
-                $_SESSION['success_message'] = 'Habitación creada exitosamente';
+                $_SESSION['success_message'] = 'HabitaciÃ³n creada exitosamente';
                 $this->redirect('/rooms');
             } catch (Exception $e) {
-                $_SESSION['error_message'] = 'Error al crear habitación: ' . $e->getMessage();
+                $_SESSION['error_message'] = 'Error al crear habitaciÃ³n: ' . $e->getMessage();
             }
         }
 
         $data = [
-            'title' => 'Nueva Habitación',
+            'title' => 'Nueva HabitaciÃ³n',
             'role' => $_SESSION['role']
         ];
 
@@ -84,15 +84,15 @@ class RoomsController extends Controller {
 
             try {
                 $this->roomModel->update($id, $data);
-                $_SESSION['success_message'] = 'Habitación actualizada exitosamente';
+                $_SESSION['success_message'] = 'HabitaciÃ³n actualizada exitosamente';
                 $this->redirect('/rooms');
             } catch (Exception $e) {
-                $_SESSION['error_message'] = 'Error al actualizar habitación: ' . $e->getMessage();
+                $_SESSION['error_message'] = 'Error al actualizar habitaciÃ³n: ' . $e->getMessage();
             }
         }
 
         $data = [
-            'title' => 'Editar Habitación',
+            'title' => 'Editar HabitaciÃ³n',
             'room' => $room,
             'role' => $_SESSION['role']
         ];
@@ -110,7 +110,7 @@ class RoomsController extends Controller {
         $room = $this->roomModel->getById($id);
         if ($room && $room['hotel_id'] == $hotelId) {
             $this->roomModel->update($id, ['is_active' => 0]);
-            $_SESSION['success_message'] = 'Habitación eliminada exitosamente';
+            $_SESSION['success_message'] = 'HabitaciÃ³n eliminada exitosamente';
         }
         
         $this->redirect('/rooms');

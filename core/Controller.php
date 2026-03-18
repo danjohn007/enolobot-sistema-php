@@ -52,6 +52,12 @@ class Controller {
             return false;
         }
         $userRole = $_SESSION['role'] ?? '';
+        
+        // Superadmin has access to everything
+        if ($userRole === 'superadmin') {
+            return true;
+        }
+        
         if (is_array($roles)) {
             return in_array($userRole, $roles);
         }

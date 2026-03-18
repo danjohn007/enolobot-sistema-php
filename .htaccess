@@ -1,11 +1,14 @@
 <IfModule mod_rewrite.c>
     RewriteEngine On
+    RewriteBase /sistema/
     
-    # Allow direct access to test_connection.php and other root files
-    RewriteCond %{REQUEST_FILENAME} -f
-    RewriteRule ^ - [L]
+    # Allow direct access to PHP test files in root
+    RewriteRule ^(test_.*\.php|debug\.php)$ - [L]
+    
+    # Deny access to config and sensitive directories
+    RewriteRule ^(config|core|app)/ - [F,L]
     
     # Redirect to public folder
+    RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteRule ^(.*)$ public/$1 [L]
-</IfModule>

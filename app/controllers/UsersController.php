@@ -14,7 +14,7 @@ class UsersController extends Controller {
         $users = $this->userModel->getUsersByHotel($hotelId);
 
         $data = [
-            'title' => 'Gestión de Usuarios',
+            'title' => 'GestiÃ³n de Usuarios',
             'users' => $users,
             'role' => $_SESSION['role']
         ];
@@ -32,7 +32,7 @@ class UsersController extends Controller {
             $email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
             
             if ($this->userModel->findByEmail($email)) {
-                $_SESSION['error_message'] = 'Este email ya está registrado';
+                $_SESSION['error_message'] = 'Este email ya estÃ¡ registrado';
             } else {
                 $data = [
                     'hotel_id' => $hotelId,

@@ -31,19 +31,37 @@ class DashboardController extends Controller {
 
         if ($role === 'superadmin') {
             // Superadmin stats
-            $stats['total_hotels'] = $this->db->selectOne("SELECT COUNT(*) as count FROM hotels WHERE is_active = 1")['count'];
-            $stats['active_subscriptions'] = $this->db->selectOne("SELECT COUNT(*) as count FROM hotels WHERE subscription_status = 'active'")['count'];
-            $stats['trial_hotels'] = $this->db->selectOne("SELECT COUNT(*) as count FROM hotels WHERE subscription_status = 'trial'")['count'];
-            $stats['total_users'] = $this->db->selectOne("SELECT COUNT(*) as count FROM users WHERE is_active = 1")['count'];
+            $result = $this->db->selectOne("SELECT COUNT(*) as count FROM hotels WHERE is_active = 1");
+            $stats['total_hotels'] = $result ? $result['count'] : 0;
+            
+            $result = $this->db->selectOne("SELECT COUNT(*) as count FROM hotels WHERE subscription_status = 'active'");
+            $stats['active_subscriptions'] = $result ? $result['count'] : 0;
+            
+            $result = $this->db->selectOne("SELECT COUNT(*) as count FROM hotels WHERE subscription_status = 'trial'");
+            $stats['trial_hotels'] = $result ? $result['count'] : 0;
+            
+            $result = $this->db->selectOne("SELECT COUNT(*) as count FROM users WHERE is_active = 1");
+            $stats['total_users'] = $result ? $result['count'] : 0;
         } else {
             // Hotel-specific stats
             if ($hotelId) {
-                $stats['total_rooms'] = $this->db->selectOne("SELECT COUNT(*) as count FROM rooms WHERE hotel_id = ? AND is_active = 1", [$hotelId])['count'];
-                $stats['available_rooms'] = $this->db->selectOne("SELECT COUNT(*) as count FROM rooms WHERE hotel_id = ? AND status = 'available' AND is_active = 1", [$hotelId])['count'];
-                $stats['total_tables'] = $this->db->selectOne("SELECT COUNT(*) as count FROM restaurant_tables WHERE hotel_id = ? AND is_active = 1", [$hotelId])['count'];
-                $stats['available_tables'] = $this->db->selectOne("SELECT COUNT(*) as count FROM restaurant_tables WHERE hotel_id = ? AND status = 'available' AND is_active = 1", [$hotelId])['count'];
-                $stats['total_amenities'] = $this->db->selectOne("SELECT COUNT(*) as count FROM amenities WHERE hotel_id = ? AND is_active = 1", [$hotelId])['count'];
-                $stats['pending_services'] = $this->db->selectOne("SELECT COUNT(*) as count FROM service_requests WHERE hotel_id = ? AND status = 'pending'", [$hotelId])['count'];
+                $result = $this->db->selectOne("SELECT COUNT(*) as count FROM rooms WHERE hotel_id = ? AND is_active = 1", [$hotelId]);
+                $stats['total_rooms'] = $result ? $result['count'] : 0;
+                
+                $result = $this->db->selectOne("SELECT COUNT(*) as count FROM rooms WHERE hotel_id = ? AND status = 'available' AND is_active = 1", [$hotelId]);
+                $stats['available_rooms'] = $result ? $result['count'] : 0;
+                
+                $result = $this->db->selectOne("SELECT COUNT(*) as count FROM restaurant_tables WHERE hotel_id = ? AND is_active = 1", [$hotelId]);
+                $stats['total_tables'] = $result ? $result['count'] : 0;
+                
+                $result = $this->db->selectOne("SELECT COUNT(*) as count FROM restaurant_tables WHERE hotel_id = ? AND status = 'available' AND is_active = 1", [$hotelId]);
+                $stats['available_tables'] = $result ? $result['count'] : 0;
+                
+                $result = $this->db->selectOne("SELECT COUNT(*) as count FROM amenities WHERE hotel_id = ? AND is_active = 1", [$hotelId]);
+                $stats['total_amenities'] = $result ? $result['count'] : 0;
+                
+                $result = $this->db->selectOne("SELECT COUNT(*) as count FROM service_requests WHERE hotel_id = ? AND status = 'pending'", [$hotelId]);
+                $stats['pending_services'] = $result ? $result['count'] : 0;
                 
                 // Recent reservations
                 $stats['recent_reservations'] = $this->db->select("

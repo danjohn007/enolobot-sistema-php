@@ -75,9 +75,9 @@ class ChatbotController extends Controller {
             ], 400);
         }
 
-        $subject = 'Confirmación';
-        $texto = 'Confirmación para ' . $fecha;
-        $html = '<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Confirmación</title></head><body>'
+        $subject = 'ConfirmaciÃ³n';
+        $texto = 'ConfirmaciÃ³n para ' . $fecha;
+        $html = '<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>ConfirmaciÃ³n</title></head><body>'
             . '<p style="font-family:Arial,sans-serif;font-size:16px;">' . htmlspecialchars($texto, ENT_QUOTES, 'UTF-8') . '</p>'
             . '</body></html>';
 

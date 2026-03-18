@@ -1,10 +1,21 @@
 <?php
+// Enable error reporting for debugging
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+ini_set('log_errors', 1);
+
 // Auto-detect base URL
 function getBaseUrl() {
     $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
     $host = $_SERVER['HTTP_HOST'];
+    
+    // Get the directory path, removing /public from the path
     $script = $_SERVER['SCRIPT_NAME'];
-    $path = str_replace(basename($script), '', $script);
+    $path = dirname($script);
+    
+    // Remove /public from the path if it exists
+    $path = str_replace('/public', '', $path);
+    
     return $protocol . $host . $path;
 }
 
@@ -18,7 +29,7 @@ define('DB_USER', 'enolobot_chatbot');
 define('DB_PASS', ';FY7mUvCtQ%d');
 define('DB_CHARSET', 'utf8mb4');
 // System configuration
-define('SITE_NAME', 'MajorBot - Sistema de Mayordomía Online');
+define('SITE_NAME', 'MajorBot - Sistema de MayordomÃ­a Online');
 define('DEFAULT_CONTROLLER', 'home');
 define('DEFAULT_METHOD', 'index');
 
@@ -36,8 +47,8 @@ define('CHATBOT_API_KEY', '91b2c9e5-8f1a-4d3a-9c7e-2b5f6a7d8e9f');
 // SMTP configuration (editable)
 define('SMTP_ENABLED', true);
 define('SMTP_HOST', 'enolobot.digital');
-define('SMTP_PORT', 465); // cPanel SSL/TLS (if your provider requests STARTTLS, use 587)
-define('SMTP_ENCRYPTION', 'ssl'); // tls, ssl, none
+define('SMTP_PORT', 587); // cPanel STARTTLS
+define('SMTP_ENCRYPTION', 'tls'); // tls, ssl, none
 define('SMTP_USERNAME', 'confirmaciones@enolobot.digital');
 define('SMTP_PASSWORD', 'BO4+&im{Y[m;');
 define('SMTP_FROM_EMAIL', 'confirmaciones@enolobot.digital');

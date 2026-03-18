@@ -14,7 +14,7 @@ class TablesController extends Controller {
         $tables = $this->tableModel->getTablesByHotel($hotelId);
 
         $data = [
-            'title' => 'Gestión de Mesas',
+            'title' => 'GestiÃ³n de Mesas',
             'tables' => $tables,
             'role' => $_SESSION['role']
         ];

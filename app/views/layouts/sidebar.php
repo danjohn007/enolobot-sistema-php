@@ -11,6 +11,45 @@
 
                     <?php if (in_array($role ?? '', ['superadmin'])): ?>
                         <li class="nav-item mt-3">
+                            <h6 class="sidebar-heading px-3 text-muted">GESTIÓN</h6>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="<?php echo BASE_URL; ?>/amenities">
+                                <i class="bi bi-water"></i> Amenidades
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="<?php echo BASE_URL; ?>/dishes">
+                                <i class="bi bi-cup-straw"></i> Platillos
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="<?php echo BASE_URL; ?>/rooms">
+                                <i class="bi bi-door-open"></i> Habitaciones
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="<?php echo BASE_URL; ?>/tables">
+                                <i class="bi bi-table"></i> Mesas
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="<?php echo BASE_URL; ?>/users">
+                                <i class="bi bi-people"></i> Usuarios
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="<?php echo BASE_URL; ?>/services">
+                                <i class="bi bi-bell"></i> Solicitudes
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="<?php echo BASE_URL; ?>/blocks">
+                                <i class="bi bi-grid"></i> Bloques
+                            </a>
+                        </li>
+                        
+                        <li class="nav-item mt-3">
                             <h6 class="sidebar-heading px-3 text-muted">SUPERADMIN</h6>
                         </li>
                         <li class="nav-item">

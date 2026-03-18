@@ -33,16 +33,16 @@ class AuthController extends Controller {
                         
                         $this->redirect('/dashboard');
                     } else {
-                        $error = 'Su cuenta está desactivada';
+                        $error = 'Su cuenta estÃ¡ desactivada';
                     }
                 } else {
-                    $error = 'Credenciales inválidas';
+                    $error = 'Credenciales invÃ¡lidas';
                 }
             }
         }
 
         $data = [
-            'title' => 'Iniciar Sesión',
+            'title' => 'Iniciar SesiÃ³n',
             'error' => $error ?? null
         ];
         $this->loadView('layouts/header', $data);
@@ -68,13 +68,13 @@ class AuthController extends Controller {
             $errors = [];
 
             if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
-                $errors[] = 'Email inválido';
+                $errors[] = 'Email invÃ¡lido';
             }
             if (empty($password) || strlen($password) < 6) {
-                $errors[] = 'La contraseña debe tener al menos 6 caracteres';
+                $errors[] = 'La contraseÃ±a debe tener al menos 6 caracteres';
             }
             if ($password !== $confirmPassword) {
-                $errors[] = 'Las contraseñas no coinciden';
+                $errors[] = 'Las contraseÃ±as no coinciden';
             }
             if (empty($firstName) || empty($lastName)) {
                 $errors[] = 'Nombre y apellido son requeridos';
@@ -84,7 +84,7 @@ class AuthController extends Controller {
             }
 
             if ($this->userModel->findByEmail($email)) {
-                $errors[] = 'Este email ya está registrado';
+                $errors[] = 'Este email ya estÃ¡ registrado';
             }
 
             if (empty($errors)) {
@@ -127,7 +127,7 @@ class AuthController extends Controller {
 
                     $this->db->getConnection()->commit();
 
-                    $_SESSION['success_message'] = 'Registro exitoso. Por favor inicie sesión.';
+                    $_SESSION['success_message'] = 'Registro exitoso. Por favor inicie sesiÃ³n.';
                     $this->redirect('/auth/login');
                 } catch (Exception $e) {
                     $this->db->getConnection()->rollBack();
@@ -157,7 +157,7 @@ class AuthController extends Controller {
     }
 
     public function forgot() {
-        $data = ['title' => 'Recuperar Contraseña'];
+        $data = ['title' => 'Recuperar ContraseÃ±a'];
         $this->loadView('layouts/header', $data);
         $this->loadView('auth/forgot', $data);
         $this->loadView('layouts/footer');

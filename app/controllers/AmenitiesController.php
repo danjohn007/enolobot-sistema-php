@@ -14,7 +14,7 @@ class AmenitiesController extends Controller {
         $amenities = $this->amenityModel->getAmenitiesByHotel($hotelId);
 
         $data = [
-            'title' => 'Gestión de Amenidades',
+            'title' => 'GestiÃ³n de Amenidades',
             'amenities' => $amenities,
             'role' => $_SESSION['role']
         ];

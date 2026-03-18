@@ -24,7 +24,7 @@ class BlocksController extends Controller {
         $blocks = $this->blockModel->getActiveBlocks($hotelId);
 
         $data = [
-            'title' => 'Gestión de Bloqueos',
+            'title' => 'GestiÃ³n de Bloqueos',
             'blocks' => $blocks,
             'role' => $_SESSION['role']
         ];

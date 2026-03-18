@@ -32,11 +32,22 @@ class SmtpMailer {
         }
 
         $transport = ($this->encryption === 'ssl') ? 'ssl://' : 'tcp://';
+        $context = stream_context_create([
+            'ssl' => [
+                'verify_peer' => false,
+                'verify_peer_name' => false,
+                'allow_self_signed' => true,
+                'SNI_enabled' => true,
+                'peer_name' => $this->host,
+            ],
+        ]);
         $socket = @stream_socket_client(
             $transport . $this->host . ':' . $this->port,
             $errno,
             $errstr,
-            $this->timeout
+            $this->timeout,
+            STREAM_CLIENT_CONNECT,
+            $context
         );
 
         if (!$socket) {
@@ -51,7 +62,15 @@ class SmtpMailer {
 
             if ($this->encryption === 'tls') {
                 $this->sendCommand($socket, 'STARTTLS', [220]);
-                if (!stream_socket_enable_crypto($socket, true, STREAM_CRYPTO_METHOD_TLS_CLIENT)) {
+                $cryptoMethod = STREAM_CRYPTO_METHOD_TLS_CLIENT;
+                if (defined('STREAM_CRYPTO_METHOD_TLSv1_2_CLIENT')) {
+                    $cryptoMethod |= STREAM_CRYPTO_METHOD_TLSv1_2_CLIENT;
+                }
+                if (defined('STREAM_CRYPTO_METHOD_TLSv1_3_CLIENT')) {
+                    $cryptoMethod |= STREAM_CRYPTO_METHOD_TLSv1_3_CLIENT;
+                }
+
+                if (!stream_socket_enable_crypto($socket, true, $cryptoMethod)) {
                     throw new Exception('Unable to start TLS encryption');
                 }
                 $this->sendCommand($socket, 'EHLO localhost', [250]);

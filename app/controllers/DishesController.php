@@ -17,7 +17,7 @@ class DishesController extends Controller {
         $categories = $this->categoryModel->getCategoriesByHotel($hotelId);
 
         $data = [
-            'title' => 'Gestión de Menú',
+            'title' => 'GestiÃ³n de MenÃº',
             'dishes' => $dishes,
             'categories' => $categories,
             'role' => $_SESSION['role']
@@ -34,7 +34,7 @@ class DishesController extends Controller {
         $categories = $this->categoryModel->getCategoriesByHotel($hotelId);
 
         if (empty($categories)) {
-            $_SESSION['error_message'] = 'Debe crear al menos una categoría antes de agregar platillos';
+            $_SESSION['error_message'] = 'Debe crear al menos una categorÃ­a antes de agregar platillos';
             $this->redirect('/dishes/categories');
         }
 
@@ -151,16 +151,16 @@ class DishesController extends Controller {
                     'display_order' => intval($_POST['display_order'] ?? 0)
                 ];
                 $this->categoryModel->create($data);
-                $_SESSION['success_message'] = 'Categoría creada exitosamente';
+                $_SESSION['success_message'] = 'CategorÃ­a creada exitosamente';
             } elseif ($_POST['action'] === 'delete' && isset($_POST['category_id'])) {
                 $this->categoryModel->update($_POST['category_id'], ['is_active' => 0]);
-                $_SESSION['success_message'] = 'Categoría eliminada exitosamente';
+                $_SESSION['success_message'] = 'CategorÃ­a eliminada exitosamente';
             }
             $this->redirect('/dishes/categories');
         }
 
         $data = [
-            'title' => 'Categorías del Menú',
+            'title' => 'CategorÃ­as del MenÃº',
             'categories' => $categories,
             'role' => $_SESSION['role']
         ];
