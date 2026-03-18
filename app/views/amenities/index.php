@@ -14,113 +14,124 @@
     </div>
 <?php endif; ?>
 
-<div class="row g-4">
-    <?php if (empty($amenities)): ?>
-        <div class="col-md-12">
-            <div class="alert alert-info text-center">
-                <i class="bi bi-info-circle"></i> No hay amenidades registradas
-            </div>
-        </div>
-    <?php else: ?>
-        <?php foreach ($amenities as $amenity): ?>
-            <div class="col-md-6 col-lg-4">
-                <div class="card h-100">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0"><?php echo $amenity['name']; ?></h5>
-                        <span class="badge badge-status 
-                            <?php 
-                                echo $amenity['status'] === 'available' ? 'bg-success' : 
-                                     ($amenity['status'] === 'occupied' ? 'bg-danger' : 
-                                      ($amenity['status'] === 'maintenance' ? 'bg-warning' : 'bg-secondary'));
-                            ?>">
-                            <?php 
-                                $statusText = [
-                                    'available' => 'Disponible',
-                                    'occupied' => 'En uso',
-                                    'maintenance' => 'Mantenimiento',
-                                    'blocked' => 'Bloqueada'
-                                ];
-                                echo $statusText[$amenity['status']] ?? $amenity['status'];
-                            ?>
-                        </span>
-                    </div>
-                    <div class="card-body">
-                        <?php if ($amenity['category']): ?>
-                            <p class="card-text">
-                                <span class="badge bg-info"><?php echo $amenity['category']; ?></span>
-                            </p>
-                        <?php endif; ?>
-                        <?php if ($amenity['description']): ?>
-                            <p class="card-text text-muted small">
-                                <?php echo substr($amenity['description'], 0, 100); ?>
-                                <?php echo strlen($amenity['description']) > 100 ? '...' : ''; ?>
-                            </p>
-                        <?php endif; ?>
-                        <p class="card-text">
-                            <strong><i class="bi bi-people"></i> Capacidad:</strong> <?php echo $amenity['capacity']; ?> personas
-                        </p>
-                        <?php if ($amenity['price'] > 0): ?>
-                            <p class="card-text">
-                                <strong><i class="bi bi-currency-dollar"></i> Precio:</strong> 
-                                $<?php echo number_format($amenity['price'], 2); ?>
-                            </p>
-                        <?php endif; ?>
-                        <?php if ($amenity['operating_hours_start'] && $amenity['operating_hours_end']): ?>
-                            <p class="card-text small">
-                                <i class="bi bi-clock"></i> 
-                                <?php echo date('H:i', strtotime($amenity['operating_hours_start'])); ?> - 
-                                <?php echo date('H:i', strtotime($amenity['operating_hours_end'])); ?>
-                            </p>
-                        <?php endif; ?>
-                    </div>
-                    <div class="card-footer bg-white">
-                        <div class="btn-group w-100" role="group">
-                            <?php if ($role === 'hotel_admin'): ?>
-                                <a href="<?php echo BASE_URL; ?>/amenities/edit/<?php echo $amenity['id']; ?>" 
-                                   class="btn btn-sm btn-outline-primary">
-                                    <i class="bi bi-pencil"></i> Editar
-                                </a>
-                            <?php endif; ?>
-                            <button type="button" class="btn btn-sm btn-outline-secondary" 
-                                    data-bs-toggle="modal" data-bs-target="#statusModal<?php echo $amenity['id']; ?>">
-                                <i class="bi bi-gear"></i> Estado
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
+<?php if (isset($_SESSION['error_message'])): ?>
+    <div class="alert alert-danger alert-dismissible fade show">
+        <i class="bi bi-x-circle"></i> <?php echo $_SESSION['error_message']; unset($_SESSION['error_message']); ?>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+<?php endif; ?>
 
-            <!-- Status Change Modal -->
-            <div class="modal fade" id="statusModal<?php echo $amenity['id']; ?>" tabindex="-1">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title">Cambiar Estado - <?php echo $amenity['name']; ?></h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                        </div>
-                        <form method="POST" action="<?php echo BASE_URL; ?>/amenities/changeStatus/<?php echo $amenity['id']; ?>">
-                            <div class="modal-body">
-                                <div class="mb-3">
-                                    <label class="form-label">Nuevo Estado</label>
-                                    <select class="form-select" name="status" required>
-                                        <option value="available" <?php echo $amenity['status'] === 'available' ? 'selected' : ''; ?>>Disponible</option>
-                                        <option value="occupied" <?php echo $amenity['status'] === 'occupied' ? 'selected' : ''; ?>>En uso</option>
-                                        <option value="maintenance" <?php echo $amenity['status'] === 'maintenance' ? 'selected' : ''; ?>>Mantenimiento</option>
-                                        <option value="blocked" <?php echo $amenity['status'] === 'blocked' ? 'selected' : ''; ?>>Bloqueada</option>
-                                    </select>
+<?php if (empty($amenities)): ?>
+    <div class="alert alert-info text-center">
+        <i class="bi bi-info-circle"></i> No hay amenidades registradas
+    </div>
+<?php else: ?>
+    <div class="card">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>IMAGEN</th>
+                            <th>NOMBRE</th>
+                            <th>CATEGORÍA</th>
+                            <th>PRECIO</th>
+                            <th>CAPACIDAD</th>
+                            <th>HORARIO</th>
+                            <th>DISPONIBLE</th>
+                            <th>ACCIONES</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($amenities as $amenity): ?>
+                            <tr>
+                                <td>
+                                    <?php if (!empty($amenity['image'])): ?>
+                                        <img src="<?php echo BASE_URL . '/' . htmlspecialchars($amenity['image']); ?>"
+                                             alt="<?php echo htmlspecialchars($amenity['name']); ?>"
+                                             style="width:50px;height:50px;object-fit:cover;border-radius:4px;">
+                                    <?php else: ?>
+                                        <div style="width:50px;height:50px;background:#e9ecef;border-radius:4px;display:flex;align-items:center;justify-content:center;">
+                                            <i class="bi bi-image text-muted"></i>
+                                        </div>
+                                    <?php endif; ?>
+                                </td>
+                                <td><strong><?php echo htmlspecialchars($amenity['name']); ?></strong></td>
+                                <td><?php echo htmlspecialchars($amenity['category'] ?? '—'); ?></td>
+                                <td>$<?php echo number_format($amenity['price'] ?? 0, 2); ?></td>
+                                <td><?php echo (int)($amenity['capacity'] ?? 1); ?></td>
+                                <td>
+                                    <?php if (!empty($amenity['operating_hours_start']) && !empty($amenity['operating_hours_end'])): ?>
+                                        <?php echo date('H:i', strtotime($amenity['operating_hours_start'])); ?> -
+                                        <?php echo date('H:i', strtotime($amenity['operating_hours_end'])); ?>
+                                    <?php else: ?>
+                                        —
+                                    <?php endif; ?>
+                                </td>
+                                <td>
+                                    <?php if (($amenity['is_active'] ?? 0) == 1): ?>
+                                        <span class="badge bg-success">Sí</span>
+                                    <?php else: ?>
+                                        <span class="badge bg-danger">No</span>
+                                    <?php endif; ?>
+                                </td>
+                                <td>
+                                    <?php if ($role === 'hotel_admin'): ?>
+                                        <a href="<?php echo BASE_URL; ?>/amenities/edit/<?php echo $amenity['id']; ?>"
+                                           class="btn btn-sm btn-warning" title="Editar">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                    <?php endif; ?>
+                                    <button type="button" class="btn btn-sm btn-secondary"
+                                            data-bs-toggle="modal" data-bs-target="#statusModal<?php echo $amenity['id']; ?>"
+                                            title="Cambiar estado">
+                                        <i class="bi bi-gear"></i>
+                                    </button>
+                                    <?php if ($role === 'hotel_admin'): ?>
+                                        <a href="<?php echo BASE_URL; ?>/amenities/delete/<?php echo $amenity['id']; ?>"
+                                           class="btn btn-sm btn-danger" title="Eliminar"
+                                           onclick="return confirm('¿Eliminar esta amenidad?')">
+                                            <i class="bi bi-trash"></i>
+                                        </a>
+                                    <?php endif; ?>
+                                </td>
+                            </tr>
+
+                            <!-- Status Change Modal -->
+                            <div class="modal fade" id="statusModal<?php echo $amenity['id']; ?>" tabindex="-1">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">Cambiar Estado - <?php echo htmlspecialchars($amenity['name']); ?></h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                        </div>
+                                        <form method="POST" action="<?php echo BASE_URL; ?>/amenities/changeStatus/<?php echo $amenity['id']; ?>">
+                                            <div class="modal-body">
+                                                <div class="mb-3">
+                                                    <label class="form-label">Nuevo Estado</label>
+                                                    <select class="form-select" name="status" required>
+                                                        <option value="available" <?php echo ($amenity['status'] ?? '') === 'available' ? 'selected' : ''; ?>>Disponible</option>
+                                                        <option value="occupied" <?php echo ($amenity['status'] ?? '') === 'occupied' ? 'selected' : ''; ?>>En uso</option>
+                                                        <option value="maintenance" <?php echo ($amenity['status'] ?? '') === 'maintenance' ? 'selected' : ''; ?>>Mantenimiento</option>
+                                                        <option value="blocked" <?php echo ($amenity['status'] ?? '') === 'blocked' ? 'selected' : ''; ?>>Bloqueada</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                                <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                                            </div>
+                                        </form>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                                <button type="submit" class="btn btn-primary">Guardar Cambios</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
             </div>
-        <?php endforeach; ?>
-    <?php endif; ?>
-</div>
+        </div>
+    </div>
+<?php endif; ?>
 
             </div>
         </main>

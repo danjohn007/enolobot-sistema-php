@@ -17,92 +17,86 @@
     </div>
 <?php endif; ?>
 
+<?php if (isset($_SESSION['error_message'])): ?>
+    <div class="alert alert-danger alert-dismissible fade show">
+        <i class="bi bi-x-circle"></i> <?php echo $_SESSION['error_message']; unset($_SESSION['error_message']); ?>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+<?php endif; ?>
+
 <?php if (empty($categories)): ?>
     <div class="alert alert-warning">
-        <i class="bi bi-exclamation-triangle"></i> 
-        Debe crear al menos una categoría antes de agregar platillos. 
+        <i class="bi bi-exclamation-triangle"></i>
+        Debe crear al menos una categoría antes de agregar platillos.
         <a href="<?php echo BASE_URL; ?>/dishes/categories" class="alert-link">Crear categorías</a>
     </div>
 <?php endif; ?>
+
+<?php
+$serviceTimeText = [
+    'breakfast' => 'Desayuno',
+    'lunch'     => 'Comida',
+    'dinner'    => 'Cena',
+    'all_day'   => 'All day',
+];
+?>
 
 <?php if (empty($dishes)): ?>
     <div class="alert alert-info text-center">
         <i class="bi bi-info-circle"></i> No hay platillos registrados en el menú
     </div>
 <?php else: ?>
-    <?php 
-    $dishesByCategory = [];
-    foreach ($dishes as $dish) {
-        $catName = $dish['category_name'] ?? 'Sin categoría';
-        if (!isset($dishesByCategory[$catName])) {
-            $dishesByCategory[$catName] = [];
-        }
-        $dishesByCategory[$catName][] = $dish;
-    }
-    ?>
-
-    <?php foreach ($dishesByCategory as $categoryName => $categoryDishes): ?>
-        <h4 class="mt-4 mb-3"><?php echo $categoryName; ?></h4>
-        <div class="row g-4 mb-4">
-            <?php foreach ($categoryDishes as $dish): ?>
-                <div class="col-md-6 col-lg-4">
-                    <div class="card h-100">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between align-items-start mb-2">
-                                <h5 class="card-title"><?php echo $dish['name']; ?></h5>
-                                <span class="badge <?php echo $dish['is_available'] ? 'bg-success' : 'bg-danger'; ?>">
-                                    <?php echo $dish['is_available'] ? 'Disponible' : 'Agotado'; ?>
-                                </span>
-                            </div>
-                            <?php if ($dish['description']): ?>
-                                <p class="card-text text-muted small"><?php echo $dish['description']; ?></p>
-                            <?php endif; ?>
-                            <p class="card-text">
-                                <strong class="text-primary" style="font-size: 1.25rem;">
-                                    $<?php echo number_format($dish['price'], 2); ?>
-                                </strong>
-                            </p>
-                            <p class="card-text small">
-                                <i class="bi bi-clock"></i> <?php echo $dish['preparation_time']; ?> min
-                                <span class="ms-2">
-                                    <i class="bi bi-sun"></i> 
-                                    <?php 
-                                        $serviceTimeText = [
-                                            'breakfast' => 'Desayuno',
-                                            'lunch' => 'Comida',
-                                            'dinner' => 'Cena',
-                                            'all_day' => 'Todo el día'
-                                        ];
-                                        echo $serviceTimeText[$dish['service_time']] ?? $dish['service_time'];
-                                    ?>
-                                </span>
-                            </p>
-                        </div>
-                        <div class="card-footer bg-white">
-                            <div class="btn-group w-100" role="group">
-                                <a href="<?php echo BASE_URL; ?>/dishes/edit/<?php echo $dish['id']; ?>" 
-                                   class="btn btn-sm btn-outline-primary">
-                                    <i class="bi bi-pencil"></i> Editar
-                                </a>
-                                <form method="POST" action="<?php echo BASE_URL; ?>/dishes/toggleAvailability/<?php echo $dish['id']; ?>" 
-                                      style="display: inline;">
-                                    <button type="submit" class="btn btn-sm btn-outline-warning">
-                                        <i class="bi bi-toggle-on"></i> 
-                                        <?php echo $dish['is_available'] ? 'Agotar' : 'Disponible'; ?>
+    <div class="card">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>NOMBRE</th>
+                            <th>CATEGORÍA</th>
+                            <th>PRECIO</th>
+                            <th>SERVICIO</th>
+                            <th>DISPONIBLE</th>
+                            <th>ACCIONES</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($dishes as $dish): ?>
+                            <tr>
+                                <td><strong><?php echo htmlspecialchars($dish['name']); ?></strong></td>
+                                <td><?php echo htmlspecialchars($dish['category_name'] ?? $dish['category'] ?? '—'); ?></td>
+                                <td><strong>$<?php echo number_format($dish['price'], 2); ?></strong></td>
+                                <td><?php echo $serviceTimeText[$dish['service_time']] ?? htmlspecialchars($dish['service_time'] ?? '—'); ?></td>
+                                <td>
+                                    <?php if ($dish['is_available']): ?>
+                                        <span class="badge bg-success">Sí</span>
+                                    <?php else: ?>
+                                        <span class="badge bg-danger">No</span>
+                                    <?php endif; ?>
+                                </td>
+                                <td>
+                                    <a href="<?php echo BASE_URL; ?>/dishes/edit/<?php echo $dish['id']; ?>"
+                                       class="btn btn-sm btn-warning" title="Editar">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                    <form method="POST" action="<?php echo BASE_URL; ?>/dishes/toggleAvailability/<?php echo $dish['id']; ?>"
+                                          style="display: inline;">
+                                        <button type="submit" class="btn btn-sm btn-secondary" title="Alternar disponibilidad">
+                                            <i class="bi bi-toggle-on"></i>
+                                        </button>
+                                    </form>
+                                    <button type="button" class="btn btn-sm btn-danger" title="Eliminar"
+                                            onclick="if(confirm('¿Eliminar platillo?')) window.location='<?php echo BASE_URL; ?>/dishes/delete/<?php echo $dish['id']; ?>'">
+                                        <i class="bi bi-trash"></i>
                                     </button>
-                                </form>
-                                <button type="button" class="btn btn-sm btn-outline-danger"
-                                        onclick="if(confirmDelete('¿Eliminar platillo?')) 
-                                                 window.location='<?php echo BASE_URL; ?>/dishes/delete/<?php echo $dish['id']; ?>'">
-                                    <i class="bi bi-trash"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            <?php endforeach; ?>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
         </div>
-    <?php endforeach; ?>
+    </div>
 <?php endif; ?>
 
             </div>
