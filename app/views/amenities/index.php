@@ -2,7 +2,7 @@
     <h1 class="h2"><i class="bi bi-water"></i> Gestión de Amenidades</h1>
     <?php if ($role === 'hotel_admin'): ?>
         <a href="<?php echo BASE_URL; ?>/amenities/create" class="btn btn-primary">
-            <i class="bi bi-plus-circle"></i> Nueva Amenidad
+            <i class="bi bi-plus-circle"></i> Agregar Amenidad
         </a>
     <?php endif; ?>
 </div>

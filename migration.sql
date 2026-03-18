@@ -182,3 +182,58 @@ INNER JOIN menu_categories mc
 SET d.category_id = mc.id
 WHERE d.category_id IS NULL
   AND d.category NOT IN ('breakfast','appetizer','main_course','dessert','lunch','dinner');
+
+-- ============================================================
+-- 5. TABLA dishes: hacer category_id nullable y agregar columna
+--    category para soporte de categorías de texto libre
+-- ============================================================
+DROP PROCEDURE IF EXISTS sp_migrate_dishes_category;
+DELIMITER $$
+CREATE PROCEDURE sp_migrate_dishes_category()
+BEGIN
+    -- Hacer category_id nullable si actualmente es NOT NULL
+    IF EXISTS (
+        SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS
+        WHERE TABLE_SCHEMA = DATABASE()
+          AND TABLE_NAME = 'dishes'
+          AND COLUMN_NAME = 'category_id'
+          AND IS_NULLABLE = 'NO'
+    ) THEN
+        ALTER TABLE dishes MODIFY COLUMN category_id INT NULL DEFAULT NULL;
+    END IF;
+
+    -- Agregar columna category (texto) si no existe
+    IF NOT EXISTS (
+        SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS
+        WHERE TABLE_SCHEMA = DATABASE()
+          AND TABLE_NAME = 'dishes'
+          AND COLUMN_NAME = 'category'
+    ) THEN
+        ALTER TABLE dishes ADD COLUMN category VARCHAR(100) DEFAULT NULL AFTER category_id;
+    END IF;
+END$$
+DELIMITER ;
+CALL sp_migrate_dishes_category();
+DROP PROCEDURE IF EXISTS sp_migrate_dishes_category;
+
+-- Sincronizar columna category con el nombre de la categoría FK existente
+UPDATE dishes d
+JOIN menu_categories c ON d.category_id = c.id
+SET d.category = c.name
+WHERE d.category IS NULL AND d.category_id IS NOT NULL;
+
+-- ============================================================
+-- NOTA SOBRE VISIBILIDAD DE AMENIDADES:
+-- Si las amenidades no aparecen en el sistema (pantalla vacía),
+-- es probable que el hotel_id de los registros importados no
+-- coincida con el hotel_id del usuario activo en sesión.
+-- Identifique el hotel_id correcto y ajuste los datos:
+--
+--   SELECT id, name FROM hotels;
+--   UPDATE amenities SET hotel_id = <ID_CORRECTO>
+--   WHERE hotel_id != <ID_CORRECTO>;
+--
+-- También asegúrese de que is_active = 1 en todos los registros
+-- que desea mostrar:
+--   UPDATE amenities SET is_active = 1 WHERE is_active IS NULL;
+-- ============================================================

@@ -31,23 +31,27 @@ class DishesController extends Controller {
 
     public function create() {
         $hotelId = $_SESSION['hotel_id'];
-        $categories = $this->categoryModel->getCategoriesByHotel($hotelId);
-
-        if (empty($categories)) {
-            $_SESSION['error_message'] = 'Debe crear al menos una categorÃ­a antes de agregar platillos';
-            $this->redirect('/dishes/categories');
-        }
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $allowedCategories = ['Entrada', 'Plato Principal', 'Postre', 'Bebida', 'Desayuno', 'Comida', 'Cena'];
+            $category = trim($_POST['category'] ?? '');
+
+            if (empty($category) || !in_array($category, $allowedCategories)) {
+                $_SESSION['error_message'] = 'Seleccione una categoría válida.';
+                $this->redirect('/dishes/create');
+            }
+
             $data = [
                 'hotel_id' => $hotelId,
-                'category_id' => intval($_POST['category_id']),
+                'category' => $category,
                 'name' => trim($_POST['name']),
                 'description' => trim($_POST['description'] ?? ''),
                 'price' => floatval($_POST['price']),
-                'service_time' => $_POST['service_time'],
-                'preparation_time' => intval($_POST['preparation_time'] ?? 15),
-                'is_available' => 1
+                'service_time' => in_array($_POST['service_time'] ?? '', ['all_day', 'breakfast', 'lunch', 'dinner'])
+                    ? $_POST['service_time']
+                    : 'all_day',
+                'preparation_time' => 15,
+                'is_available' => isset($_POST['is_available']) ? 1 : 0
             ];
 
             try {
@@ -61,7 +65,6 @@ class DishesController extends Controller {
 
         $data = [
             'title' => 'Nuevo Platillo',
-            'categories' => $categories,
             'role' => $_SESSION['role']
         ];
 
