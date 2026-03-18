@@ -3,11 +3,29 @@ class Dish extends Model {
     protected $table = 'dishes';
 
     public function getDishesByHotel($hotelId) {
-        $sql = "SELECT d.*, c.name as category_name 
-                FROM {$this->table} d
-                LEFT JOIN menu_categories c ON d.category_id = c.id
-                WHERE d.hotel_id = ? AND d.is_active = 1 
-                ORDER BY c.display_order, d.name";
+        // Detect schema: old DB uses category VARCHAR; new DB uses category_id FK
+        $hasCategoryId = !empty($this->db->select(
+            "SHOW COLUMNS FROM {$this->table} LIKE 'category_id'"
+        ));
+        $hasIsActive = !empty($this->db->select(
+            "SHOW COLUMNS FROM {$this->table} LIKE 'is_active'"
+        ));
+
+        if ($hasCategoryId) {
+            $isActiveClause = $hasIsActive ? "AND d.is_active = 1" : "";
+            $sql = "SELECT d.*, COALESCE(c.name, d.category) as category_name
+                    FROM {$this->table} d
+                    LEFT JOIN menu_categories c ON d.category_id = c.id
+                    WHERE d.hotel_id = ? {$isActiveClause}
+                    ORDER BY c.display_order, d.name";
+        } else {
+            // Old schema: category is a plain VARCHAR column
+            $sql = "SELECT *, category as category_name
+                    FROM {$this->table}
+                    WHERE hotel_id = ?
+                    ORDER BY category, name";
+        }
+
         return $this->db->select($sql, [$hotelId]);
     }
 
@@ -19,18 +37,43 @@ class Dish extends Model {
     }
 
     public function getAvailableDishes($hotelId, $serviceTime = null) {
-        $sql = "SELECT d.*, c.name as category_name 
-                FROM {$this->table} d
-                LEFT JOIN menu_categories c ON d.category_id = c.id
-                WHERE d.hotel_id = ? AND d.is_active = 1 AND d.is_available = 1";
-        $params = [$hotelId];
-        
-        if ($serviceTime) {
-            $sql .= " AND (d.service_time = ? OR d.service_time = 'all_day')";
-            $params[] = $serviceTime;
+        // Detect schema
+        $hasCategoryId = !empty($this->db->select(
+            "SHOW COLUMNS FROM {$this->table} LIKE 'category_id'"
+        ));
+        $hasIsActive = !empty($this->db->select(
+            "SHOW COLUMNS FROM {$this->table} LIKE 'is_active'"
+        ));
+
+        if ($hasCategoryId) {
+            $isActiveClause = $hasIsActive ? "AND d.is_active = 1" : "";
+            $sql = "SELECT d.*, COALESCE(c.name, d.category) as category_name
+                    FROM {$this->table} d
+                    LEFT JOIN menu_categories c ON d.category_id = c.id
+                    WHERE d.hotel_id = ? {$isActiveClause} AND d.is_available = 1";
+            $params = [$hotelId];
+
+            if ($serviceTime) {
+                $sql .= " AND (d.service_time = ? OR d.service_time = 'all_day')";
+                $params[] = $serviceTime;
+            }
+
+            $sql .= " ORDER BY c.display_order, d.name";
+        } else {
+            // Old schema
+            $sql = "SELECT *, category as category_name
+                    FROM {$this->table}
+                    WHERE hotel_id = ? AND is_available = 1";
+            $params = [$hotelId];
+
+            if ($serviceTime) {
+                $sql .= " AND (service_time = ? OR service_time = 'all_day')";
+                $params[] = $serviceTime;
+            }
+
+            $sql .= " ORDER BY category, name";
         }
-        
-        $sql .= " ORDER BY c.display_order, d.name";
+
         return $this->db->select($sql, $params);
     }
 

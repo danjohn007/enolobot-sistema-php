@@ -3,7 +3,17 @@ class Amenity extends Model {
     protected $table = 'amenities';
 
     public function getAmenitiesByHotel($hotelId) {
-        $sql = "SELECT * FROM {$this->table} WHERE hotel_id = ? AND is_active = 1 ORDER BY name";
+        // Check if is_active column exists (may be absent in older DB deployments)
+        $hasIsActive = !empty($this->db->select(
+            "SHOW COLUMNS FROM {$this->table} LIKE 'is_active'"
+        ));
+
+        if ($hasIsActive) {
+            $sql = "SELECT * FROM {$this->table} WHERE hotel_id = ? AND is_active = 1 ORDER BY name";
+        } else {
+            $sql = "SELECT * FROM {$this->table} WHERE hotel_id = ? ORDER BY name";
+        }
+
         return $this->db->select($sql, [$hotelId]);
     }
 
