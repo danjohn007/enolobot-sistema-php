@@ -20,26 +20,106 @@ CREATE TABLE IF NOT EXISTS menu_categories (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- ============================================================
--- 2. TABLA amenities: agregar columna is_active si no existe
+-- 2. TABLA amenities: agregar columnas faltantes si no existen
 --    (usa procedimiento para compatibilidad con MySQL 5.7)
 -- ============================================================
-DROP PROCEDURE IF EXISTS sp_add_amenities_is_active;
+DROP PROCEDURE IF EXISTS sp_migrate_amenities;
 DELIMITER $$
-CREATE PROCEDURE sp_add_amenities_is_active()
+CREATE PROCEDURE sp_migrate_amenities()
 BEGIN
+    -- status (debe agregarse ANTES de is_active para que el AFTER funcione)
+    IF NOT EXISTS (
+        SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS
+        WHERE TABLE_SCHEMA = DATABASE()
+          AND TABLE_NAME   = 'amenities'
+          AND COLUMN_NAME  = 'status'
+    ) THEN
+        ALTER TABLE amenities
+            ADD COLUMN status ENUM('available','occupied','maintenance','blocked') DEFAULT 'available';
+    END IF;
+
+    -- is_active
     IF NOT EXISTS (
         SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS
         WHERE TABLE_SCHEMA = DATABASE()
           AND TABLE_NAME   = 'amenities'
           AND COLUMN_NAME  = 'is_active'
     ) THEN
-        ALTER TABLE amenities ADD COLUMN is_active TINYINT(1) DEFAULT 1 AFTER status;
-        UPDATE amenities SET is_active = 1 WHERE is_active IS NULL;
+        ALTER TABLE amenities ADD COLUMN is_active TINYINT(1) DEFAULT 1;
+    END IF;
+
+    -- image (para almacenar ruta de imagen)
+    IF NOT EXISTS (
+        SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS
+        WHERE TABLE_SCHEMA = DATABASE()
+          AND TABLE_NAME   = 'amenities'
+          AND COLUMN_NAME  = 'image'
+    ) THEN
+        ALTER TABLE amenities ADD COLUMN image VARCHAR(255) DEFAULT NULL;
+        -- Copiar valores de image_url si esa columna existe
+        IF EXISTS (
+            SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS
+            WHERE TABLE_SCHEMA = DATABASE()
+              AND TABLE_NAME   = 'amenities'
+              AND COLUMN_NAME  = 'image_url'
+        ) THEN
+            UPDATE amenities SET image = image_url WHERE image IS NULL;
+        END IF;
+    END IF;
+
+    -- category
+    IF NOT EXISTS (
+        SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS
+        WHERE TABLE_SCHEMA = DATABASE()
+          AND TABLE_NAME   = 'amenities'
+          AND COLUMN_NAME  = 'category'
+    ) THEN
+        ALTER TABLE amenities ADD COLUMN category VARCHAR(100) DEFAULT NULL;
+    END IF;
+
+    -- capacity
+    IF NOT EXISTS (
+        SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS
+        WHERE TABLE_SCHEMA = DATABASE()
+          AND TABLE_NAME   = 'amenities'
+          AND COLUMN_NAME  = 'capacity'
+    ) THEN
+        ALTER TABLE amenities ADD COLUMN capacity INT DEFAULT 1;
+    END IF;
+
+    -- price
+    IF NOT EXISTS (
+        SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS
+        WHERE TABLE_SCHEMA = DATABASE()
+          AND TABLE_NAME   = 'amenities'
+          AND COLUMN_NAME  = 'price'
+    ) THEN
+        ALTER TABLE amenities ADD COLUMN price DECIMAL(10,2) DEFAULT 0.00;
+    END IF;
+
+    -- operating_hours_start
+    IF NOT EXISTS (
+        SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS
+        WHERE TABLE_SCHEMA = DATABASE()
+          AND TABLE_NAME   = 'amenities'
+          AND COLUMN_NAME  = 'operating_hours_start'
+    ) THEN
+        ALTER TABLE amenities ADD COLUMN operating_hours_start TIME DEFAULT NULL;
+    END IF;
+
+    -- operating_hours_end
+    IF NOT EXISTS (
+        SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS
+        WHERE TABLE_SCHEMA = DATABASE()
+          AND TABLE_NAME   = 'amenities'
+          AND COLUMN_NAME  = 'operating_hours_end'
+    ) THEN
+        ALTER TABLE amenities ADD COLUMN operating_hours_end TIME DEFAULT NULL;
     END IF;
 END$$
 DELIMITER ;
-CALL sp_add_amenities_is_active();
-DROP PROCEDURE IF EXISTS sp_add_amenities_is_active;
+CALL sp_migrate_amenities();
+DROP PROCEDURE IF EXISTS sp_migrate_amenities;
 
 -- ============================================================
 -- 3. TABLA dishes: agregar columnas faltantes si no existen
@@ -48,6 +128,16 @@ DROP PROCEDURE IF EXISTS sp_migrate_dishes;
 DELIMITER $$
 CREATE PROCEDURE sp_migrate_dishes()
 BEGIN
+    -- is_available (requerido por el código; agréguese primero si falta)
+    IF NOT EXISTS (
+        SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS
+        WHERE TABLE_SCHEMA = DATABASE()
+          AND TABLE_NAME   = 'dishes'
+          AND COLUMN_NAME  = 'is_available'
+    ) THEN
+        ALTER TABLE dishes ADD COLUMN is_available TINYINT(1) DEFAULT 1;
+    END IF;
+
     -- is_active
     IF NOT EXISTS (
         SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS
@@ -55,8 +145,7 @@ BEGIN
           AND TABLE_NAME   = 'dishes'
           AND COLUMN_NAME  = 'is_active'
     ) THEN
-        ALTER TABLE dishes ADD COLUMN is_active TINYINT(1) DEFAULT 1 AFTER is_available;
-        UPDATE dishes SET is_active = 1 WHERE is_active IS NULL;
+        ALTER TABLE dishes ADD COLUMN is_active TINYINT(1) DEFAULT 1;
     END IF;
 
     -- preparation_time
@@ -66,7 +155,7 @@ BEGIN
           AND TABLE_NAME   = 'dishes'
           AND COLUMN_NAME  = 'preparation_time'
     ) THEN
-        ALTER TABLE dishes ADD COLUMN preparation_time INT DEFAULT 15 AFTER service_time;
+        ALTER TABLE dishes ADD COLUMN preparation_time INT DEFAULT 15;
     END IF;
 
     -- image (para reemplazar image_url si existía)
@@ -76,7 +165,7 @@ BEGIN
           AND TABLE_NAME   = 'dishes'
           AND COLUMN_NAME  = 'image'
     ) THEN
-        ALTER TABLE dishes ADD COLUMN image VARCHAR(255) DEFAULT NULL AFTER price;
+        ALTER TABLE dishes ADD COLUMN image VARCHAR(255) DEFAULT NULL;
         -- Copiar valores de image_url si esa columna existe
         IF EXISTS (
             SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS
@@ -95,7 +184,7 @@ BEGIN
           AND TABLE_NAME   = 'dishes'
           AND COLUMN_NAME  = 'category_id'
     ) THEN
-        ALTER TABLE dishes ADD COLUMN category_id INT DEFAULT NULL AFTER hotel_id;
+        ALTER TABLE dishes ADD COLUMN category_id INT DEFAULT NULL;
     END IF;
 END$$
 DELIMITER ;

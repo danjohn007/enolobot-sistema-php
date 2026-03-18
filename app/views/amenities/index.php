@@ -69,7 +69,7 @@
                                     <?php endif; ?>
                                 </td>
                                 <td>
-                                    <?php if (($amenity['status'] ?? '') === 'available'): ?>
+                                    <?php if (($amenity['is_active'] ?? 0) == 1): ?>
                                         <span class="badge bg-success">Sí</span>
                                     <?php else: ?>
                                         <span class="badge bg-danger">No</span>

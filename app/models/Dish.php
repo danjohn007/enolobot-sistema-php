@@ -2,25 +2,34 @@
 class Dish extends Model {
     protected $table = 'dishes';
 
-    public function getDishesByHotel($hotelId) {
-        // Detect schema: old DB uses category VARCHAR; new DB uses category_id FK
-        $hasCategoryId = !empty($this->db->select(
-            "SHOW COLUMNS FROM {$this->table} LIKE 'category_id'"
-        ));
-        $hasIsActive = !empty($this->db->select(
-            "SHOW COLUMNS FROM {$this->table} LIKE 'is_active'"
-        ));
+    /** @var array|null Cached column-existence flags for this table */
+    private static $schemaCache = null;
 
-        if ($hasCategoryId) {
-            $isActiveClause = $hasIsActive ? "AND d.is_active = 1" : "";
+    private function schema(): array {
+        if (self::$schemaCache === null) {
+            $cols = array_column(
+                $this->db->select("SHOW COLUMNS FROM {$this->table}"),
+                'Field'
+            );
+            self::$schemaCache = array_flip($cols);
+        }
+        return self::$schemaCache;
+    }
+
+    public function getDishesByHotel($hotelId) {
+        $schema = $this->schema();
+
+        if (isset($schema['category_id'])) {
+            $isActiveClause = isset($schema['is_active']) ? "AND d.is_active = 1" : "";
             $sql = "SELECT d.*, COALESCE(c.name, d.category) as category_name
                     FROM {$this->table} d
                     LEFT JOIN menu_categories c ON d.category_id = c.id
                     WHERE d.hotel_id = ? {$isActiveClause}
                     ORDER BY c.display_order, d.name";
         } else {
-            // Old schema: category is a plain VARCHAR column
-            $sql = "SELECT *, category as category_name
+            // Old schema: category is a plain VARCHAR column; image may be image_url
+            $imageCol = isset($schema['image_url']) ? "image_url as image" : "NULL as image";
+            $sql = "SELECT *, {$imageCol}, category as category_name
                     FROM {$this->table}
                     WHERE hotel_id = ?
                     ORDER BY category, name";
@@ -37,16 +46,10 @@ class Dish extends Model {
     }
 
     public function getAvailableDishes($hotelId, $serviceTime = null) {
-        // Detect schema
-        $hasCategoryId = !empty($this->db->select(
-            "SHOW COLUMNS FROM {$this->table} LIKE 'category_id'"
-        ));
-        $hasIsActive = !empty($this->db->select(
-            "SHOW COLUMNS FROM {$this->table} LIKE 'is_active'"
-        ));
+        $schema = $this->schema();
 
-        if ($hasCategoryId) {
-            $isActiveClause = $hasIsActive ? "AND d.is_active = 1" : "";
+        if (isset($schema['category_id'])) {
+            $isActiveClause = isset($schema['is_active']) ? "AND d.is_active = 1" : "";
             $sql = "SELECT d.*, COALESCE(c.name, d.category) as category_name
                     FROM {$this->table} d
                     LEFT JOIN menu_categories c ON d.category_id = c.id
@@ -61,7 +64,8 @@ class Dish extends Model {
             $sql .= " ORDER BY c.display_order, d.name";
         } else {
             // Old schema
-            $sql = "SELECT *, category as category_name
+            $imageCol = isset($schema['image_url']) ? "image_url as image" : "NULL as image";
+            $sql = "SELECT *, {$imageCol}, category as category_name
                     FROM {$this->table}
                     WHERE hotel_id = ? AND is_available = 1";
             $params = [$hotelId];
