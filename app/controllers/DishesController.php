@@ -33,7 +33,7 @@ class DishesController extends Controller {
         $hotelId = $_SESSION['hotel_id'];
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $allowedCategories = ['Entrada', 'Plato Principal', 'Postre', 'Bebida', 'Desayuno', 'Comida', 'Cena'];
+            $allowedCategories = ['Entrada', 'Plato Principal', 'Postre', 'Bebida', 'Desayuno', 'Comida', 'Cena', 'Sopa', 'Pasta', 'Ensalada', 'Especialidad'];
             $category = trim($_POST['category'] ?? '');
 
             if (empty($category) || !in_array($category, $allowedCategories)) {
@@ -85,13 +85,22 @@ class DishesController extends Controller {
         $categories = $this->categoryModel->getCategoriesByHotel($hotelId);
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $allowedCategories = ['Entrada', 'Plato Principal', 'Postre', 'Bebida', 'Desayuno', 'Comida', 'Cena', 'Sopa', 'Pasta', 'Ensalada', 'Especialidad'];
+            $category = trim($_POST['category'] ?? '');
+
+            if (empty($category) || !in_array($category, $allowedCategories)) {
+                $_SESSION['error_message'] = 'Seleccione una categoría válida.';
+                $this->redirect('/dishes/edit/' . $id);
+            }
+
             $data = [
-                'category_id' => intval($_POST['category_id']),
+                'category' => $category,
                 'name' => trim($_POST['name']),
                 'description' => trim($_POST['description'] ?? ''),
                 'price' => floatval($_POST['price']),
-                'service_time' => $_POST['service_time'],
-                'preparation_time' => intval($_POST['preparation_time'] ?? 15),
+                'service_time' => in_array($_POST['service_time'] ?? '', ['all_day', 'breakfast', 'lunch', 'dinner'])
+                    ? $_POST['service_time']
+                    : 'all_day',
                 'is_available' => isset($_POST['is_available']) ? 1 : 0
             ];
 
