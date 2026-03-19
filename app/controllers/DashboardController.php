@@ -45,41 +45,20 @@ class DashboardController extends Controller {
         } else {
             // Hotel-specific stats
             if ($hotelId) {
-                $result = $this->db->selectOne("SELECT COUNT(*) as count FROM rooms WHERE hotel_id = ? AND is_active = 1", [$hotelId]);
-                $stats['total_rooms'] = $result ? $result['count'] : 0;
-                
-                $result = $this->db->selectOne("SELECT COUNT(*) as count FROM rooms WHERE hotel_id = ? AND status = 'available' AND is_active = 1", [$hotelId]);
-                $stats['available_rooms'] = $result ? $result['count'] : 0;
-                
-                $result = $this->db->selectOne("SELECT COUNT(*) as count FROM restaurant_tables WHERE hotel_id = ? AND is_active = 1", [$hotelId]);
-                $stats['total_tables'] = $result ? $result['count'] : 0;
-                
-                $result = $this->db->selectOne("SELECT COUNT(*) as count FROM restaurant_tables WHERE hotel_id = ? AND status = 'available' AND is_active = 1", [$hotelId]);
-                $stats['available_tables'] = $result ? $result['count'] : 0;
-                
                 $result = $this->db->selectOne("SELECT COUNT(*) as count FROM amenities WHERE hotel_id = ? AND is_active = 1", [$hotelId]);
                 $stats['total_amenities'] = $result ? $result['count'] : 0;
                 
                 $result = $this->db->selectOne("SELECT COUNT(*) as count FROM service_requests WHERE hotel_id = ? AND status = 'pending'", [$hotelId]);
                 $stats['pending_services'] = $result ? $result['count'] : 0;
-                
-                // Recent reservations
-                $stats['recent_reservations'] = $this->db->select("
-                    SELECT r.*, u.first_name, u.last_name, ro.room_number 
-                    FROM room_reservations r
-                    LEFT JOIN users u ON r.guest_id = u.id
-                    LEFT JOIN rooms ro ON r.room_id = ro.id
-                    WHERE r.hotel_id = ?
-                    ORDER BY r.created_at DESC
-                    LIMIT 5
-                ", [$hotelId]);
+
+                $result = $this->db->selectOne("SELECT COUNT(*) as count FROM wines WHERE hotel_id = ? AND is_active = 1", [$hotelId]);
+                $stats['total_wines'] = $result ? $result['count'] : 0;
 
                 // Pending service requests
                 $stats['pending_requests'] = $this->db->select("
-                    SELECT sr.*, u.first_name, u.last_name, r.room_number
+                    SELECT sr.*, u.first_name, u.last_name
                     FROM service_requests sr
                     LEFT JOIN users u ON sr.guest_id = u.id
-                    LEFT JOIN rooms r ON sr.room_id = r.id
                     WHERE sr.hotel_id = ? AND sr.status = 'pending'
                     ORDER BY sr.created_at DESC
                     LIMIT 5

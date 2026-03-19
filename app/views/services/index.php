@@ -27,7 +27,6 @@
                             <th>Tipo de Servicio</th>
                             <th>Descripción</th>
                             <th>Huésped</th>
-                            <th>Habitación</th>
                             <th>Prioridad</th>
                             <th>Estado</th>
                             <th>Asignado a</th>
@@ -49,13 +48,6 @@
                                     <small>
                                         <?php echo $request['first_name'] . ' ' . $request['last_name']; ?>
                                     </small>
-                                </td>
-                                <td>
-                                    <?php if ($request['room_number']): ?>
-                                        <span class="badge bg-info"><?php echo $request['room_number']; ?></span>
-                                    <?php else: ?>
-                                        <small class="text-muted">N/A</small>
-                                    <?php endif; ?>
                                 </td>
                                 <td>
                                     <span class="badge 

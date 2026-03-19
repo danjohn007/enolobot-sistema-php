@@ -3,10 +3,9 @@ class ServiceRequest extends Model {
     protected $table = 'service_requests';
 
     public function getRequestsByHotel($hotelId, $status = null) {
-        $sql = "SELECT sr.*, u.first_name, u.last_name, r.room_number, a.first_name as assigned_first_name, a.last_name as assigned_last_name
+        $sql = "SELECT sr.*, u.first_name, u.last_name, a.first_name as assigned_first_name, a.last_name as assigned_last_name
                 FROM {$this->table} sr
                 LEFT JOIN users u ON sr.guest_id = u.id
-                LEFT JOIN rooms r ON sr.room_id = r.id
                 LEFT JOIN users a ON sr.assigned_to = a.id
                 WHERE sr.hotel_id = ?";
         $params = [$hotelId];
@@ -38,18 +37,16 @@ class ServiceRequest extends Model {
     }
 
     public function getMyRequests($userId) {
-        $sql = "SELECT sr.*, r.room_number
+        $sql = "SELECT sr.*
                 FROM {$this->table} sr
-                LEFT JOIN rooms r ON sr.room_id = r.id
                 WHERE sr.assigned_to = ? 
                 ORDER BY sr.status = 'pending' DESC, sr.priority DESC, sr.created_at DESC";
         return $this->db->select($sql, [$userId]);
     }
 
     public function getGuestRequests($guestId) {
-        $sql = "SELECT sr.*, r.room_number
+        $sql = "SELECT sr.*
                 FROM {$this->table} sr
-                LEFT JOIN rooms r ON sr.room_id = r.id
                 WHERE sr.guest_id = ? 
                 ORDER BY sr.created_at DESC";
         return $this->db->select($sql, [$guestId]);

@@ -1,14 +1,12 @@
 <?php
 class ServicesController extends Controller {
     private $serviceModel;
-    private $roomModel;
     private $userModel;
 
     public function __construct() {
         parent::__construct();
         $this->requireLogin();
         $this->serviceModel = $this->loadModel('ServiceRequest');
-        $this->roomModel = $this->loadModel('Room');
         $this->userModel = $this->loadModel('User');
     }
 
@@ -60,18 +58,8 @@ class ServicesController extends Controller {
             }
         }
 
-        $rooms = [];
-        if ($role === 'guest') {
-            // Get rooms where guest has active reservations
-            $sql = "SELECT DISTINCT r.* FROM rooms r
-                    INNER JOIN room_reservations rr ON r.id = rr.room_id
-                    WHERE rr.guest_id = ? AND rr.status IN ('confirmed', 'checked_in')";
-            $rooms = $this->db->select($sql, [$_SESSION['user_id']]);
-        }
-
         $data = [
             'title' => 'Nueva Solicitud',
-            'rooms' => $rooms,
             'role' => $role
         ];
 
@@ -129,11 +117,10 @@ class ServicesController extends Controller {
         $hotelId = $_SESSION['hotel_id'];
         $role = $_SESSION['role'];
         
-        $sql = "SELECT sr.*, u.first_name, u.last_name, u.phone, u.email, r.room_number, 
+        $sql = "SELECT sr.*, u.first_name, u.last_name, u.phone, u.email, 
                 a.first_name as assigned_first_name, a.last_name as assigned_last_name
                 FROM service_requests sr
                 LEFT JOIN users u ON sr.guest_id = u.id
-                LEFT JOIN rooms r ON sr.room_id = r.id
                 LEFT JOIN users a ON sr.assigned_to = a.id
                 WHERE sr.id = ?";
         $request = $this->db->selectOne($sql, [$id]);

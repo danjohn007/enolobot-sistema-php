@@ -7,10 +7,10 @@ class ConversationLog extends Model {
             SELECT
                 cl.*,
                 w.name  AS wine_name,
-                wd.customer_name
+                cp.customer_name
             FROM conversation_logs cl
-            LEFT JOIN wines       w  ON cl.wine_id  = w.id
-            LEFT JOIN wine_drafts wd ON cl.draft_id = wd.id
+            LEFT JOIN wines            w  ON cl.wine_id = w.id
+            LEFT JOIN customer_profile cp ON cl.phone   = cp.phone
             WHERE cl.phone = ?
             ORDER BY cl.created_at DESC
             LIMIT ?
@@ -23,10 +23,10 @@ class ConversationLog extends Model {
             SELECT
                 cl.*,
                 w.name  AS wine_name,
-                wd.customer_name
+                cp.customer_name
             FROM conversation_logs cl
-            LEFT JOIN wines       w  ON cl.wine_id  = w.id
-            LEFT JOIN wine_drafts wd ON cl.draft_id = wd.id
+            LEFT JOIN wines            w  ON cl.wine_id = w.id
+            LEFT JOIN customer_profile cp ON cl.phone   = cp.phone
             ORDER BY cl.created_at DESC
             LIMIT ?
         ";
@@ -84,12 +84,12 @@ class ConversationLog extends Model {
             SELECT
                 cl.*,
                 w.name  AS wine_name,
-                wd.customer_name
+                cp.customer_name
             FROM conversation_logs cl
-            LEFT JOIN wines       w  ON cl.wine_id  = w.id
-            LEFT JOIN wine_drafts wd ON cl.draft_id = wd.id
+            LEFT JOIN wines            w  ON cl.wine_id = w.id
+            LEFT JOIN customer_profile cp ON cl.phone   = cp.phone
             WHERE cl.message_content LIKE ?
-               OR wd.customer_name   LIKE ?
+               OR cp.customer_name   LIKE ?
             ORDER BY cl.created_at DESC
             LIMIT ?
         ";

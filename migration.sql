@@ -295,3 +295,23 @@ CREATE TABLE IF NOT EXISTS conversation_logs (
 -- que desea mostrar:
 --   UPDATE amenities SET is_active = 1 WHERE is_active IS NULL;
 -- ============================================================
+
+-- ============================================================
+-- ACTUALIZACIÓN: Tabla customer_profile para nombres de clientes
+-- Ejecute esta sentencia si la tabla no existe aún en la base de datos
+-- ============================================================
+CREATE TABLE IF NOT EXISTS customer_profile (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    phone VARCHAR(30) NOT NULL UNIQUE,
+    customer_name VARCHAR(200) DEFAULT NULL,
+    email VARCHAR(150) DEFAULT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_phone (phone)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+-- ============================================================
+-- NOTA: La tabla customer_profile almacena los perfiles de clientes
+-- del chatbot. El campo 'phone' debe coincidir con el campo 'phone'
+-- de la tabla 'conversation_logs' para que aparezca el nombre del
+-- cliente en el módulo de Interacciones (/conversation_logs).
+-- ============================================================

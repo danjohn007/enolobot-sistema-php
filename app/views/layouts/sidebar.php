@@ -34,16 +34,6 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="<?php echo BASE_URL; ?>/rooms">
-                                <i class="bi bi-door-open"></i> Habitaciones
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="<?php echo BASE_URL; ?>/tables">
-                                <i class="bi bi-table"></i> Mesas
-                            </a>
-                        </li>
-                        <li class="nav-item">
                             <a class="nav-link" href="<?php echo BASE_URL; ?>/users">
                                 <i class="bi bi-people"></i> Usuarios
                             </a>
@@ -61,11 +51,6 @@
                         
                         <li class="nav-item mt-3">
                             <h6 class="sidebar-heading px-3 text-muted">SUPERADMIN</h6>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="<?php echo BASE_URL; ?>/hotels">
-                                <i class="bi bi-buildings"></i> Hoteles
-                            </a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="<?php echo BASE_URL; ?>/subscriptions">
@@ -97,40 +82,11 @@
                         <?php endif; ?>
 
                         <li class="nav-item mt-3">
-                            <h6 class="sidebar-heading px-3 text-muted">HABITACIONES</h6>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="<?php echo BASE_URL; ?>/rooms">
-                                <i class="bi bi-door-open"></i> Habitaciones
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="<?php echo BASE_URL; ?>/reservations/rooms">
-                                <i class="bi bi-calendar-check"></i> Reservaciones
-                            </a>
-                        </li>
-
-                        <li class="nav-item mt-3">
                             <h6 class="sidebar-heading px-3 text-muted">RESTAURANTE</h6>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="<?php echo BASE_URL; ?>/tables">
-                                <i class="bi bi-table"></i> Mesas
-                            </a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="<?php echo BASE_URL; ?>/dishes">
                                 <i class="bi bi-cup-straw"></i> Menú
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="<?php echo BASE_URL; ?>/reservations/tables">
-                                <i class="bi bi-calendar-event"></i> Reservas Mesas
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="<?php echo BASE_URL; ?>/orders">
-                                <i class="bi bi-receipt"></i> Pedidos
                             </a>
                         </li>
 
@@ -188,23 +144,8 @@
                             <h6 class="sidebar-heading px-3 text-muted">HUÉSPED</h6>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="<?php echo BASE_URL; ?>/guest/rooms">
-                                <i class="bi bi-door-open"></i> Buscar Habitaciones
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="<?php echo BASE_URL; ?>/guest/restaurant">
-                                <i class="bi bi-cup-straw"></i> Menú Restaurante
-                            </a>
-                        </li>
-                        <li class="nav-item">
                             <a class="nav-link" href="<?php echo BASE_URL; ?>/guest/amenities">
                                 <i class="bi bi-water"></i> Amenidades
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="<?php echo BASE_URL; ?>/guest/reservations">
-                                <i class="bi bi-calendar-check"></i> Mis Reservaciones
                             </a>
                         </li>
                         <li class="nav-item">
