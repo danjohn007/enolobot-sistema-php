@@ -31,17 +31,17 @@ class DashboardController extends Controller {
 
         if ($role === 'superadmin') {
             // Superadmin stats
-            $result = $this->db->selectOne("SELECT COUNT(*) as count FROM hotels WHERE is_active = 1");
-            $stats['total_hotels'] = $result ? $result['count'] : 0;
-            
-            $result = $this->db->selectOne("SELECT COUNT(*) as count FROM hotels WHERE subscription_status = 'active'");
-            $stats['active_subscriptions'] = $result ? $result['count'] : 0;
-            
-            $result = $this->db->selectOne("SELECT COUNT(*) as count FROM hotels WHERE subscription_status = 'trial'");
-            $stats['trial_hotels'] = $result ? $result['count'] : 0;
-            
-            $result = $this->db->selectOne("SELECT COUNT(*) as count FROM users WHERE is_active = 1");
-            $stats['total_users'] = $result ? $result['count'] : 0;
+            $result = $this->db->selectOne("SELECT COUNT(*) AS total_amenidades FROM amenities");
+            $stats['total_amenidades'] = $result ? $result['total_amenidades'] : 0;
+
+            $result = $this->db->selectOne("SELECT COUNT(*) AS total_vinos FROM wines");
+            $stats['total_vinos'] = $result ? $result['total_vinos'] : 0;
+
+            $result = $this->db->selectOne("SELECT COUNT(*) AS total_platillos FROM dishes");
+            $stats['total_platillos'] = $result ? $result['total_platillos'] : 0;
+
+            $result = $this->db->selectOne("SELECT COUNT(DISTINCT phone) AS unique_users FROM conversation_logs");
+            $stats['unique_users'] = $result ? $result['unique_users'] : 0;
         } else {
             // Hotel-specific stats
             if ($hotelId) {
