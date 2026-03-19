@@ -10,13 +10,18 @@ class WinesController extends Controller {
     }
 
     public function index() {
-        $hotelId = $_SESSION['hotel_id'];
-        $wines = $this->wineModel->getWinesByHotel($hotelId);
+        $role = $_SESSION['role'];
+        if ($role === 'superadmin') {
+            $wines = $this->wineModel->getAllWines();
+        } else {
+            $hotelId = $_SESSION['hotel_id'];
+            $wines = $this->wineModel->getWinesByHotel($hotelId);
+        }
 
         $data = [
             'title' => 'Vinos',
             'wines' => $wines,
-            'role' => $_SESSION['role']
+            'role' => $role
         ];
 
         $this->loadView('layouts/header', $data);
@@ -65,10 +70,10 @@ class WinesController extends Controller {
 
     public function edit($id) {
         $this->requireRole('hotel_admin');
-        $hotelId = $_SESSION['hotel_id'];
+        $hotelId = $_SESSION['hotel_id'] ?? null;
 
         $wine = $this->wineModel->getById($id);
-        if (!$wine || $wine['hotel_id'] != $hotelId) {
+        if (!$wine || ($hotelId !== null && $wine['hotel_id'] != $hotelId)) {
             $this->redirect('/wines');
         }
 
@@ -107,10 +112,10 @@ class WinesController extends Controller {
 
     public function delete($id) {
         $this->requireRole('hotel_admin');
-        $hotelId = $_SESSION['hotel_id'];
+        $hotelId = $_SESSION['hotel_id'] ?? null;
 
         $wine = $this->wineModel->getById($id);
-        if ($wine && $wine['hotel_id'] == $hotelId) {
+        if ($wine && ($hotelId === null || $wine['hotel_id'] == $hotelId)) {
             $this->wineModel->update($id, ['is_active' => 0]);
             $_SESSION['success_message'] = 'Vino eliminado exitosamente';
         }
