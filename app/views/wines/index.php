@@ -1,6 +1,6 @@
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
     <h1 class="h2"><i class="bi bi-cup-hot"></i> Gestión de Vinos</h1>
-    <?php if ($role === 'hotel_admin'): ?>
+    <?php if (in_array($role, ['hotel_admin', 'superadmin'])): ?>
         <a href="<?php echo BASE_URL; ?>/wines/create" class="btn btn-primary">
             <i class="bi bi-plus-circle"></i> Nuevo Vino
         </a>
@@ -65,7 +65,7 @@
                                     <?php endif; ?>
                                 </td>
                                 <td>
-                                    <?php if ($role === 'hotel_admin'): ?>
+                                    <?php if (in_array($role, ['hotel_admin', 'superadmin'])): ?>
                                         <a href="<?php echo BASE_URL; ?>/wines/edit/<?php echo $wine['id']; ?>"
                                            class="btn btn-sm btn-warning" title="Editar">
                                             <i class="bi bi-pencil"></i>
