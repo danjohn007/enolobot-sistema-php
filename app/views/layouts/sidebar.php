@@ -24,7 +24,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="interacciones.php">
+                            <a class="nav-link" href="<?php echo BASE_URL; ?>/conversation_logs">
                                 <i class="fas fa-comments"></i> Interacciones
                             </a>
                         </li>
