@@ -223,6 +223,25 @@ SET d.category = c.name
 WHERE d.category IS NULL AND d.category_id IS NOT NULL;
 
 -- ============================================================
+-- 6. TABLA wines (nueva)
+-- ============================================================
+CREATE TABLE IF NOT EXISTS wines (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    hotel_id INT NOT NULL,
+    name VARCHAR(200) NOT NULL,
+    description TEXT,
+    details TEXT,
+    suggested_for TEXT,
+    price DECIMAL(10,2) DEFAULT 0.00,
+    image_path VARCHAR(255) DEFAULT NULL,
+    is_active TINYINT(1) DEFAULT 1,
+    display_order INT DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (hotel_id) REFERENCES hotels(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ============================================================
 -- NOTA SOBRE VISIBILIDAD DE AMENIDADES:
 -- Si las amenidades no aparecen en el sistema (pantalla vacía),
 -- es probable que el hotel_id de los registros importados no

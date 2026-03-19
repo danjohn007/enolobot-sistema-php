@@ -19,6 +19,11 @@
                             </a>
                         </li>
                         <li class="nav-item">
+                            <a class="nav-link" href="<?php echo BASE_URL; ?>/wines">
+                                <i class="bi bi-cup-hot"></i> Vinos
+                            </a>
+                        </li>
+                        <li class="nav-item">
                             <a class="nav-link" href="<?php echo BASE_URL; ?>/dishes">
                                 <i class="bi bi-cup-straw"></i> Platillos
                             </a>
@@ -125,6 +130,11 @@
                         <li class="nav-item">
                             <a class="nav-link" href="<?php echo BASE_URL; ?>/amenities">
                                 <i class="bi bi-water"></i> Amenidades
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="<?php echo BASE_URL; ?>/wines">
+                                <i class="bi bi-cup-hot"></i> Vinos
                             </a>
                         </li>
                         <li class="nav-item">
