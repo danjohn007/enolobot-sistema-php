@@ -9,9 +9,10 @@ class Router {
         
         // Check for controller
         if (isset($url[0]) && !empty($url[0])) {
-            $controllerPath = __DIR__ . '/../app/controllers/' . ucfirst($url[0]) . 'Controller.php';
+            $controllerName = $this->snakeToPascal($url[0]);
+            $controllerPath = __DIR__ . '/../app/controllers/' . $controllerName . 'Controller.php';
             if (file_exists($controllerPath)) {
-                $this->controller = ucfirst($url[0]);
+                $this->controller = $controllerName;
                 unset($url[0]);
             }
         }
@@ -40,6 +41,10 @@ class Router {
 
         // Call method with params
         call_user_func_array([$this->controller, $this->method], $this->params);
+    }
+
+    private function snakeToPascal($str) {
+        return str_replace('_', '', ucwords($str, '_'));
     }
 
     private function parseUrl() {
