@@ -24,6 +24,11 @@
                             </a>
                         </li>
                         <li class="nav-item">
+                            <a class="nav-link" href="interacciones.php">
+                                <i class="fas fa-comments"></i> Interacciones
+                            </a>
+                        </li>
+                        <li class="nav-item">
                             <a class="nav-link" href="<?php echo BASE_URL; ?>/dishes">
                                 <i class="bi bi-cup-straw"></i> Platillos
                             </a>
