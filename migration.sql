@@ -242,6 +242,45 @@ CREATE TABLE IF NOT EXISTS wines (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ============================================================
+-- 7. TABLA wine_drafts (borradores / solicitudes de vino del chatbot)
+-- ============================================================
+CREATE TABLE IF NOT EXISTS wine_drafts (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    hotel_id INT NOT NULL,
+    phone VARCHAR(30) NOT NULL,
+    customer_name VARCHAR(200) DEFAULT NULL,
+    wine_id INT DEFAULT NULL,
+    status ENUM('pending','confirmed','cancelled') DEFAULT 'pending',
+    notes TEXT DEFAULT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (hotel_id) REFERENCES hotels(id) ON DELETE CASCADE,
+    FOREIGN KEY (wine_id) REFERENCES wines(id) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ============================================================
+-- 8. TABLA conversation_logs (registros de interacciones del chatbot)
+-- ============================================================
+CREATE TABLE IF NOT EXISTS conversation_logs (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    hotel_id INT DEFAULT NULL,
+    phone VARCHAR(30) NOT NULL,
+    message_type ENUM('text','button','image','audio','video','document','location','other') DEFAULT 'text',
+    message_content TEXT DEFAULT NULL,
+    direction ENUM('inbound','outbound') DEFAULT 'inbound',
+    wine_id INT DEFAULT NULL,
+    draft_id INT DEFAULT NULL,
+    session_id VARCHAR(100) DEFAULT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (hotel_id) REFERENCES hotels(id) ON DELETE SET NULL,
+    FOREIGN KEY (wine_id) REFERENCES wines(id) ON DELETE SET NULL,
+    FOREIGN KEY (draft_id) REFERENCES wine_drafts(id) ON DELETE SET NULL,
+    INDEX idx_phone (phone),
+    INDEX idx_created_at (created_at),
+    INDEX idx_hotel_id (hotel_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ============================================================
 -- NOTA SOBRE VISIBILIDAD DE AMENIDADES:
 -- Si las amenidades no aparecen en el sistema (pantalla vacía),
 -- es probable que el hotel_id de los registros importados no

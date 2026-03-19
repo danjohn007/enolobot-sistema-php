@@ -72,6 +72,11 @@
                                 <i class="bi bi-graph-up"></i> Métricas Globales
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="<?php echo BASE_URL; ?>/conversation_logs">
+                                <i class="bi bi-chat-dots"></i> Logs de Conversación
+                            </a>
+                        </li>
                     <?php endif; ?>
 
                     <?php if (in_array($role ?? '', ['hotel_admin', 'restaurant_manager', 'hostess', 'collaborator'])): ?>
@@ -158,6 +163,11 @@
                         <li class="nav-item">
                             <a class="nav-link" href="<?php echo BASE_URL; ?>/reports">
                                 <i class="bi bi-file-earmark-bar-graph"></i> Reportes
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="<?php echo BASE_URL; ?>/conversation_logs">
+                                <i class="bi bi-chat-dots"></i> Logs de Conversación
                             </a>
                         </li>
                         <li class="nav-item">
