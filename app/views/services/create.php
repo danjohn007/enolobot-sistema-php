@@ -28,20 +28,6 @@
                         <div class="invalid-feedback">Seleccione el tipo de servicio.</div>
                     </div>
 
-                    <?php if (!empty($rooms)): ?>
-                        <div class="mb-3">
-                            <label for="room_id" class="form-label">Habitación</label>
-                            <select class="form-select" id="room_id" name="room_id">
-                                <option value="">Seleccione...</option>
-                                <?php foreach ($rooms as $room): ?>
-                                    <option value="<?php echo $room['id']; ?>">
-                                        Habitación <?php echo $room['room_number']; ?>
-                                    </option>
-                                <?php endforeach; ?>
-                            </select>
-                        </div>
-                    <?php endif; ?>
-
                     <div class="mb-3">
                         <label for="description" class="form-label">Descripción *</label>
                         <textarea class="form-control" id="description" name="description" 

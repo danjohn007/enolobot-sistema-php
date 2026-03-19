@@ -4,11 +4,7 @@ class Block extends Model {
 
     public function getActiveBlocks($hotelId) {
         $sql = "SELECT b.*, u.first_name, u.last_name,
-                CASE 
-                    WHEN b.resource_type = 'room' THEN (SELECT room_number FROM rooms WHERE id = b.resource_id)
-                    WHEN b.resource_type = 'table' THEN (SELECT table_number FROM restaurant_tables WHERE id = b.resource_id)
-                    WHEN b.resource_type = 'amenity' THEN (SELECT name FROM amenities WHERE id = b.resource_id)
-                END as resource_name
+                (SELECT name FROM amenities WHERE id = b.resource_id) as resource_name
                 FROM {$this->table} b
                 LEFT JOIN users u ON b.blocked_by = u.id
                 WHERE b.hotel_id = ? AND b.is_active = 1

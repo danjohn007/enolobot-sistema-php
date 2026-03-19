@@ -1,8 +1,6 @@
 <?php
 class BlocksController extends Controller {
     private $blockModel;
-    private $roomModel;
-    private $tableModel;
     private $amenityModel;
 
     public function __construct() {
@@ -10,8 +8,6 @@ class BlocksController extends Controller {
         $this->requireLogin();
         $this->requireRole(['hotel_admin', 'hostess']);
         $this->blockModel = $this->loadModel('Block');
-        $this->roomModel = $this->loadModel('Room');
-        $this->tableModel = $this->loadModel('RestaurantTable');
         $this->amenityModel = $this->loadModel('Amenity');
     }
 
@@ -24,7 +20,7 @@ class BlocksController extends Controller {
         $blocks = $this->blockModel->getActiveBlocks($hotelId);
 
         $data = [
-            'title' => 'GestiÃ³n de Bloqueos',
+            'title' => 'Gestión de Bloqueos',
             'blocks' => $blocks,
             'role' => $_SESSION['role']
         ];
@@ -57,11 +53,7 @@ class BlocksController extends Controller {
                 $this->blockModel->createBlock($data);
                 
                 // Update resource status to blocked
-                if ($resourceType === 'room') {
-                    $this->roomModel->updateStatus($resourceId, 'blocked');
-                } elseif ($resourceType === 'table') {
-                    $this->tableModel->updateStatus($resourceId, 'blocked');
-                } elseif ($resourceType === 'amenity') {
+                if ($resourceType === 'amenity') {
                     $this->amenityModel->updateStatus($resourceId, 'blocked');
                 }
                 
@@ -72,15 +64,11 @@ class BlocksController extends Controller {
             }
         }
 
-        // Get all resources
-        $rooms = $this->roomModel->getRoomsByHotel($hotelId);
-        $tables = $this->tableModel->getTablesByHotel($hotelId);
+        // Get amenities only
         $amenities = $this->amenityModel->getAmenitiesByHotel($hotelId);
 
         $data = [
             'title' => 'Nuevo Bloqueo',
-            'rooms' => $rooms,
-            'tables' => $tables,
             'amenities' => $amenities,
             'role' => $_SESSION['role']
         ];
@@ -99,11 +87,7 @@ class BlocksController extends Controller {
             $this->blockModel->releaseBlock($id, $_SESSION['user_id']);
             
             // Update resource status to available
-            if ($block['resource_type'] === 'room') {
-                $this->roomModel->updateStatus($block['resource_id'], 'available');
-            } elseif ($block['resource_type'] === 'table') {
-                $this->tableModel->updateStatus($block['resource_id'], 'available');
-            } elseif ($block['resource_type'] === 'amenity') {
+            if ($block['resource_type'] === 'amenity') {
                 $this->amenityModel->updateStatus($block['resource_id'], 'available');
             }
             
@@ -117,11 +101,7 @@ class BlocksController extends Controller {
         $hotelId = $_SESSION['hotel_id'];
         
         $sql = "SELECT b.*, u.first_name, u.last_name, r.first_name as released_first_name, r.last_name as released_last_name,
-                CASE 
-                    WHEN b.resource_type = 'room' THEN (SELECT room_number FROM rooms WHERE id = b.resource_id)
-                    WHEN b.resource_type = 'table' THEN (SELECT table_number FROM restaurant_tables WHERE id = b.resource_id)
-                    WHEN b.resource_type = 'amenity' THEN (SELECT name FROM amenities WHERE id = b.resource_id)
-                END as resource_name
+                (SELECT name FROM amenities WHERE id = b.resource_id) as resource_name
                 FROM blocks b
                 LEFT JOIN users u ON b.blocked_by = u.id
                 LEFT JOIN users r ON b.released_by = r.id
