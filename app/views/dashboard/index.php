@@ -33,11 +33,11 @@
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
-                            <h6 class="text-muted mb-2">Total de Amenidades</h6>
-                            <h2 class="mb-0"><?php echo $stats['total_amenidades'] ?? 0; ?></h2>
+                            <h6 class="text-muted mb-2">Total Hoteles</h6>
+                            <h2 class="mb-0"><?php echo $stats['total_hoteles'] ?? 0; ?></h2>
                         </div>
                         <div>
-                            <i class="bi bi-stars" style="font-size: 2.5rem; color: var(--secondary-color);"></i>
+                            <i class="bi bi-building" style="font-size: 2.5rem; color: var(--secondary-color);"></i>
                         </div>
                     </div>
                 </div>
@@ -49,11 +49,11 @@
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
-                            <h6 class="text-muted mb-2">Total de Vinos</h6>
-                            <h2 class="mb-0"><?php echo $stats['total_vinos'] ?? 0; ?></h2>
+                            <h6 class="text-muted mb-2">Suscripciones Activas</h6>
+                            <h2 class="mb-0"><?php echo $stats['suscripciones_activas'] ?? 0; ?></h2>
                         </div>
                         <div>
-                            <i class="bi bi-cup-hot" style="font-size: 2.5rem; color: var(--success-color);"></i>
+                            <i class="bi bi-check-circle" style="font-size: 2.5rem; color: var(--success-color);"></i>
                         </div>
                     </div>
                 </div>
@@ -65,11 +65,11 @@
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
-                            <h6 class="text-muted mb-2">Total de Platillos</h6>
-                            <h2 class="mb-0"><?php echo $stats['total_platillos'] ?? 0; ?></h2>
+                            <h6 class="text-muted mb-2">Hoteles en Prueba</h6>
+                            <h2 class="mb-0"><?php echo $stats['hoteles_en_prueba'] ?? 0; ?></h2>
                         </div>
                         <div>
-                            <i class="bi bi-egg-fried" style="font-size: 2.5rem; color: var(--warning-color);"></i>
+                            <i class="bi bi-clock" style="font-size: 2.5rem; color: var(--warning-color);"></i>
                         </div>
                     </div>
                 </div>
@@ -81,13 +81,60 @@
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
-                            <h6 class="text-muted mb-2">Usuarios que han interactuado (únicos)</h6>
-                            <h2 class="mb-0"><?php echo $stats['unique_users'] ?? 0; ?></h2>
+                            <h6 class="text-muted mb-2">Total Usuarios</h6>
+                            <h2 class="mb-0"><?php echo $stats['total_usuarios'] ?? 0; ?></h2>
                         </div>
                         <div>
                             <i class="bi bi-people" style="font-size: 2.5rem; color: var(--info-color);"></i>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Hoteles Registrados</h5>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted">Total de hoteles activos en la plataforma: <strong><?php echo $stats['total_hoteles'] ?? 0; ?></strong></p>
+                    <?php if (!empty($stats['hoteles_registrados'])): ?>
+                        <div class="table-responsive">
+                            <table class="table table-sm table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Hotel</th>
+                                        <th>Estado de Suscripción</th>
+                                        <th>Fecha de Registro</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php foreach ($stats['hoteles_registrados'] as $hotel): ?>
+                                        <tr>
+                                            <td><?php echo htmlspecialchars($hotel['name']); ?></td>
+                                            <td>
+                                                <?php
+                                                    $statusClass = [
+                                                        'active'    => 'bg-success',
+                                                        'trial'     => 'bg-warning text-dark',
+                                                        'expired'   => 'bg-danger',
+                                                        'cancelled' => 'bg-secondary',
+                                                    ][$hotel['subscription_status']] ?? 'bg-secondary';
+                                                ?>
+                                                <span class="badge <?php echo $statusClass; ?>">
+                                                    <?php echo ucfirst($hotel['subscription_status']); ?>
+                                                </span>
+                                            </td>
+                                            <td><?php echo date('d/m/Y', strtotime($hotel['created_at'])); ?></td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>

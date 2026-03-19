@@ -17,7 +17,8 @@ class DashboardController extends Controller {
             'title' => 'Dashboard',
             'stats' => $stats,
             'role' => $role,
-            'hotelId' => $hotelId
+            'hotelId' => $hotelId,
+            'isLoggedIn' => $this->isLoggedIn()
         ];
 
         $this->loadView('layouts/header', $data);
@@ -30,18 +31,20 @@ class DashboardController extends Controller {
         $stats = [];
 
         if ($role === 'superadmin') {
-            // Superadmin stats
-            $result = $this->db->selectOne("SELECT COUNT(*) AS total_amenidades FROM amenities");
-            $stats['total_amenidades'] = $result ? $result['total_amenidades'] : 0;
+            // Superadmin stats - hotel platform overview
+            $result = $this->db->selectOne("SELECT COUNT(*) AS total_hoteles FROM hotels WHERE is_active = 1");
+            $stats['total_hoteles'] = $result ? $result['total_hoteles'] : 0;
 
-            $result = $this->db->selectOne("SELECT COUNT(*) AS total_vinos FROM wines");
-            $stats['total_vinos'] = $result ? $result['total_vinos'] : 0;
+            $result = $this->db->selectOne("SELECT COUNT(*) AS suscripciones_activas FROM hotels WHERE subscription_status = 'active' AND is_active = 1");
+            $stats['suscripciones_activas'] = $result ? $result['suscripciones_activas'] : 0;
 
-            $result = $this->db->selectOne("SELECT COUNT(*) AS total_platillos FROM dishes");
-            $stats['total_platillos'] = $result ? $result['total_platillos'] : 0;
+            $result = $this->db->selectOne("SELECT COUNT(*) AS hoteles_en_prueba FROM hotels WHERE subscription_status = 'trial' AND is_active = 1");
+            $stats['hoteles_en_prueba'] = $result ? $result['hoteles_en_prueba'] : 0;
 
-            $result = $this->db->selectOne("SELECT COUNT(DISTINCT phone) AS unique_users FROM conversation_logs");
-            $stats['unique_users'] = $result ? $result['unique_users'] : 0;
+            $result = $this->db->selectOne("SELECT COUNT(*) AS total_usuarios FROM users WHERE is_active = 1");
+            $stats['total_usuarios'] = $result ? $result['total_usuarios'] : 0;
+
+            $stats['hoteles_registrados'] = $this->db->select("SELECT id, name, subscription_status, created_at FROM hotels WHERE is_active = 1 ORDER BY created_at DESC LIMIT 10");
         } else {
             // Hotel-specific stats
             if ($hotelId) {
