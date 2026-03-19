@@ -1,10 +1,8 @@
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
     <h1 class="h2"><i class="bi bi-water"></i> Gestión de Amenidades</h1>
-    <?php if ($role === 'hotel_admin'): ?>
-        <a href="<?php echo BASE_URL; ?>/amenities/create" class="btn btn-primary">
-            <i class="bi bi-plus-circle"></i> Nueva Amenidad
-        </a>
-    <?php endif; ?>
+    <a href="<?php echo BASE_URL; ?>/amenities/create" class="btn btn-primary">
+        <i class="bi bi-plus-circle"></i> Nueva Amenidad
+    </a>
 </div>
 
 <?php if (isset($_SESSION['success_message'])): ?>
