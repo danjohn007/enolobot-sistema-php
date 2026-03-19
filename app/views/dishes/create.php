@@ -32,6 +32,10 @@
                         <option value="Desayuno">Desayuno</option>
                         <option value="Comida">Comida</option>
                         <option value="Cena">Cena</option>
+                        <option value="Sopa">Sopa</option>
+                        <option value="Pasta">Pasta</option>
+                        <option value="Ensalada">Ensalada</option>
+                        <option value="Especialidad">Especialidad</option>
                     </select>
                     <div class="invalid-feedback">Seleccione una categoría.</div>
                 </div>
